@@ -1,0 +1,33 @@
+# Site settings
+title: 宿宝臣的博客
+author: 宿宝臣 
+author_avatar: /images/header.jpg
+email: subaochen@126.com
+description: I am a slow walker
+url: "https://subaochen.github.io"
+github_username: subaochen@126.com
+github_site_repo: subaochen/subaochen.github.io
+disqus: subaochen@126.com
+
+
+# Build settings
+highlighter: rouge
+markdown: kramdown
+kramdown:
+    syntax_highlighter: rouge
+    extensions: ["fenced_code_blocks", "autolink", "tables", "smart"]
+
+sass:
+    style: :compressed
+    sass_dir: _sass
+
+permalink: pretty
+excerpt_separator: "<!-- more -->"
+
+# path
+categories_path: categories/
+tags_path: tags/
+
+
+plugins:
+  - jekyll-sitemap
