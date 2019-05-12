@@ -13,7 +13,7 @@ published: true
 
 这基本是一个不可能完成的任务，不过作为RNN的练习，还是一个不错的题目：有数据，有场景，有吸引力。本案例主要参考：https://github.com/DarkKnight1991/Stock-Price-Prediction ，这是一个`many-to-one`的RNN案例，即通过前60日股价数据（open,close,high,low,volume）预测下一日的收盘价，其中feature size=5。
 
-先上运行结果图：![prediction result](images/stock-pred-result.png)
+先上运行结果图：![prediction result](/images/stock-pred-result.png)
 
 # 导入必要的包
 这里使用了sklearn包的MinMaxScaler进行数据的预处理。
@@ -91,7 +91,7 @@ else:
 
 构造训练数据的方法参见下图，注意颜色相同的矩形块框出了输入数据和预测数据，图中的窗口尺寸（time_steps）是3，即使用前3天的数据预测下一日的收盘价。显然，如果样本数为`N`，则可划分的输入样本数为`N-time_steps`。
 
-![build serial time data](images/stock-pred-data.png)
+![build serial time data](/images/stock-pred-data.png)
 
 
 ```python
@@ -434,7 +434,7 @@ plt.savefig(os.path.join(OUTPUT_PATH, 'train_vis_BS_'+str(BATCH_SIZE)+"_"+time.c
 ```
 
 
-![png](images/output_19_0.png)
+![png](/images/output_19_0.png)
 
 
 
@@ -498,7 +498,7 @@ print_time("program completed ", stime)
 
 
 
-![png](images/output_21_1.png)
+![png](/images/output_21_1.png)
 
 
     program completed  45.0 minutes :  55.0 seconds
@@ -518,7 +518,7 @@ plot_pred(y_pred_200,y_test_t_200)
 ```
 
 
-![png](images/output_23_0.png)
+![png](/images/output_23_0.png)
 
 
 # 后记
