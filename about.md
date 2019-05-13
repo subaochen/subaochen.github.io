@@ -8,11 +8,9 @@ author_footer: false
 
 ## 个人信息
 
-宿宝臣，山东淄博
+> 宿宝臣，山东淄博
 
-* 生命不止，折腾不息
-
-* Just for fun -- by linus
+> Email: subaochen#126.com
 
 
 ## 关于本站
