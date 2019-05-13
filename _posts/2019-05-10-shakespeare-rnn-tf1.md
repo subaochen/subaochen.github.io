@@ -8,6 +8,7 @@ date: 2019-05-10
 tags: [深度学习, RNN]
 status: publish
 published: true
+comments: true
 
 ---
 
