@@ -85,7 +85,7 @@ pd.value_counts(cat[1,:].numpy()).plot.bar()
 
 
 
-![png](images/output_7_1.png)
+![png](/images/output_7_1.png)
 
 
 # 二项分布
@@ -131,7 +131,7 @@ c.sort_index().plot.bar() # pandas支持直接绘图，很强大，很直观
 
 
 
-![png](images/output_11_1.png)
+![png](/images/output_11_1.png)
 
 
 # numpy版的多项分布
