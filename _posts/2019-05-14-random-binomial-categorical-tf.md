@@ -95,34 +95,30 @@ print(r)
 ```
 
     tf.Tensor(
-    [[ 0.22175835  0.69876534  0.3235112  -1.3062888 ]
-     [ 0.24952164 -0.07676576 -0.21965794  1.1233989 ]], shape=(2, 4), dtype=float32)
+    [[-0.8191313   1.9080187  -0.8825227   0.98521745]
+     [ 0.5667366  -0.15629756 -0.6223615  -0.91632426]], shape=(2, 4), dtype=float32)
 
 
 
 ```python
 logits = tf.log(r)
-print(logits.shape)
 tf.random.categorical(logits,1)
 ```
 
-    (2, 4)
 
 
 
-
-
-    <tf.Tensor: id=2513, shape=(2, 1), dtype=int64, numpy=
+    <tf.Tensor: id=2801, shape=(2, 1), dtype=int64, numpy=
     array([[1],
-           [3]])>
+           [0]])>
 
 
 
 **结果解读**
 
-可以看出，当从logits只采样1次的时候，tf.random.categorical实际上做了argmax操作：返回了最大概率的索引，这正是神经网络中最常见的使用方式。
+可以看出，当从logits只采样1次的时候，`tf.random.categorical`实际上等同与做了`argmax`操作（不完全相同，argmax总是会返回最大概率的索引，但是categorical是个概率问题）：返回了最大概率的索引，这正是神经网络中最常见的使用方式。
 
-需要注意的是，tf.random.categorical(logits,1)返回的是一个shape为(logits.shape[0],1)的张量，因此如果需要得到最后一行（通常是预测值）标量的索引，需要进一步的这样操作：
+需要注意的是，`tf.random.categorical(logits,1)`返回的是一个shape为(logits.shape[0],1)的张量，因此如果需要得到最后一行（通常是预测值）标量的索引，需要进一步的这样操作：
 
 
 ```python
@@ -132,7 +128,7 @@ tf.random.categorical(logits,1)[-1,0].numpy()
 
 
 
-    3
+    0
 
 
 
