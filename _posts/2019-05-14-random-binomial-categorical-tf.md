@@ -1,11 +1,11 @@
 ---
-title: tensorflow中的二项分布和多项分布
+title: tensorflow的二项分布和多项分布
 type: post
 categories:
 - 深度学习
 layout: post
 date: 2019-05-14
-tags: [深度学习, binomial, categorical, tensorflow]
+tags: [深度学习, categorical, binomial, tensorflow, random]
 status: publish
 published: true
 comments: true
@@ -88,6 +88,54 @@ pd.value_counts(cat[1,:].numpy()).plot.bar()
 ![png](/images/output_7_1.png)
 
 
+
+```python
+r = tf.random.normal([2,4])
+print(r)
+```
+
+    tf.Tensor(
+    [[ 0.22175835  0.69876534  0.3235112  -1.3062888 ]
+     [ 0.24952164 -0.07676576 -0.21965794  1.1233989 ]], shape=(2, 4), dtype=float32)
+
+
+
+```python
+logits = tf.log(r)
+print(logits.shape)
+tf.random.categorical(logits,1)
+```
+
+    (2, 4)
+
+
+
+
+
+    <tf.Tensor: id=2513, shape=(2, 1), dtype=int64, numpy=
+    array([[1],
+           [3]])>
+
+
+
+**结果解读**
+
+可以看出，当从logits只采样1次的时候，tf.random.categorical实际上做了argmax操作：返回了最大概率的索引，这正是神经网络中最常见的使用方式。
+
+需要注意的是，tf.random.categorical(logits,1)返回的是一个shape为(logits.shape[0],1)的张量，因此如果需要得到最后一行（通常是预测值）标量的索引，需要进一步的这样操作：
+
+
+```python
+tf.random.categorical(logits,1)[-1,0].numpy()
+```
+
+
+
+
+    3
+
+
+
 # 二项分布
 tensorflow的API设计在这里有点怪异，居然在tf.random包中找不到binomial方法。看一下numpy的API设计，在random包中整齐的排列了各种分布函数。
 
@@ -131,7 +179,7 @@ c.sort_index().plot.bar() # pandas支持直接绘图，很强大，很直观
 
 
 
-![png](/images/output_11_1.png)
+![png](/images/output_15_1.png)
 
 
 # numpy版的多项分布
