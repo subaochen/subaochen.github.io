@@ -14,8 +14,8 @@ comments: true
 
 这是学习tensorflow官网资料：https://tensorflow.google.cn/tutorials/sequences/text_generation 的笔记，通过RNN喂入莎士比亚的戏剧文本，尝试让电脑自己写出莎士比亚风格的文章。运行这个简单的例子需要强大的GPU，在我的笔记本上（MX 150只有2G显存）无法运行，如果只使用CPU需要较长的时间，需要有心理准备。可以在google colab上面运行测试，速度10x以上的提升。
 
-这是一个many to many的示例。实际上，RNN可能有下图所示的几种模式(参见：http://karpathy.github.io/2015/05/21/rnn-effectiveness/)：
-![diags](/images/diags.jpeg)
+这是一个many to many的示例（下图中倒数第二个）。实际上，RNN可能有下图所示的几种模式(参见：http://karpathy.github.io/2015/05/21/rnn-effectiveness/)：
+![diags](images/diags.jpeg)
 
 @TODO
 
@@ -195,7 +195,7 @@ for i in char_dataset.take(5):
 ```
 
     <DatasetV1Adapter shapes: (), types: tf.int64>
-    WARNING:tensorflow:From /home/subaochen/anaconda3/envs/tf1-cpu/lib/python3.7/site-packages/tensorflow/python/data/ops/iterator_ops.py:532: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+    WARNING:tensorflow:From /home/subaochen/anaconda3/envs/tf1/lib/python3.7/site-packages/tensorflow/python/data/ops/iterator_ops.py:532: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
     Instructions for updating:
     Colocations handled automatically by placer.
     F
@@ -311,19 +311,19 @@ for i, (input_idx, target_idx) in enumerate(zip(input_example[:5], target_exampl
 
 有点奇怪的是，fit方法为什么不能通过已经定义的batch_size自动确定步长？为什么一定要通过一个steps_per_epoch参数呢？steps_per_epoch也是通过batch_size计算出来的啊，按说应该都能够达到目的的。查阅了一下2.0.0-alpha0的文档，**这个限制已经取消了**，参见：https://www.tensorflow.org/alpha/tutorials/text/text_generation
 
+### 关于BATCH_SIZE的理解
+
+batch_size即每个批次喂入RNN的样本数量。这里的batch_size=32意味着，每次喂入RNN 32个输入样本（注意每个样本是seq_length大小的），RNN才会更新梯度。也就是说，**每个BATCH更新一次梯度**，有多少个batch就更新多少次梯度。
+
 
 ```python
 # Batch size
-# 这里的BATCH_SIZE的单位不是字符，因为此时的dataset是按照
-# ((seq_length,),(seq_length))组织的
-# 这里的32意味着，经过32次迭代，就需要遍历整个dataset，因此每次迭代需要喂入
-# 的数据尺寸如steps_per_epoch所示。
 BATCH_SIZE = 32
 
-# steps_per_epoch说明每次喂入RNN的（input_example,target_example）的个数
+# steps_per_epoch说明每次迭代整个训练数据集需要的**步数**。
 # 使用model.fit时，如果传入的数据集是Dataset对象，必须显式声明steps_per_epoch参数
-# 道理很简单，否则tensorflow不知道以多大的步长循环迭代给定的Dataset。因为传入fit函数
-# 的Dataset只是经过了seq_length分组的input_text和target_text，并没有指定训练时
+# 道理很简单，否则tensorflow不知道以多大的步长（或者说，总共需要多少步）循环迭代给定的Dataset。
+# 因为传入fit函数的Dataset只是经过了seq_length分组的input_text和target_text，并没有指定训练时
 # 使用多大的步长来迭代整个Dataset。
 # steps_per_epoch = len(text)//seq_length//BATCH_SIZE
 steps_per_epoch = examples_per_epoch//BATCH_SIZE
@@ -383,6 +383,8 @@ else:
     tf.keras.layers.GRU, recurrent_activation='sigmoid')
 ```
 
+Embedding层的batch_input_shape，第二个维度定义为None，即可以接受任意长度的字符串，不一定是seq_length长度的。当然，在训练的时候给的长度是seq_length，但是在预测时给的初始字符串长度是随意的。
+
 
 ```python
 def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
@@ -440,13 +442,12 @@ for input_example_batch, target_example_batch in dataset.take(1):
     (32, 100, 65) # (batch_size, sequence_length, vocab_size)
 
 
-<font color="red">这是为什么使用random.categorical抽取数据？</font>
+<font color="red">这里为什么使用random.categorical抽取数据？</font>
 
 
 ```python
 # 检查第0批数据？
-sampled_indices = tf.random.categorical(example_batch_predictions[0], 
-                                        num_samples=1)
+sampled_indices = tf.random.categorical(example_batch_predictions[0], num_samples=1)
 sampled_indices = tf.squeeze(sampled_indices,axis=-1).numpy()
 sampled_indices
 ```
@@ -454,14 +455,16 @@ sampled_indices
 
 
 
-    array([ 2, 64, 63, 27, 62,  3,  6, 19, 48, 57, 26, 27, 36, 21, 15,  9, 18,
-           22,  7, 44, 11, 35, 37, 26, 11, 47, 15, 15, 31, 37, 36, 61, 25,  5,
-           23, 61, 26, 24, 64, 39, 12, 20, 13, 58, 54, 31, 32,  0, 57, 39,  5,
-           53, 15, 62, 43, 43, 51,  0, 63,  0,  6, 40,  0, 57, 37, 59,  9, 62,
-           42, 22, 61, 28, 23, 10, 36, 38,  5, 29, 13, 37, 47, 27, 42, 63, 13,
-           12, 54, 53, 62, 36, 58, 43, 24, 56, 37, 23, 47, 47, 22,  3])
+    array([33, 35, 40, 32, 32, 40, 19,  2, 22, 63, 38, 49, 23, 48, 25, 50, 44,
+           45,  5, 17,  4, 36, 23,  4, 64, 34, 21, 58, 38, 20, 33, 46, 35, 20,
+            7, 31, 45,  9, 20, 45, 28, 28, 31,  9, 28, 26, 57, 20, 28, 12, 34,
+           59, 11, 47, 45, 36, 40, 58, 13, 63,  6, 17, 35, 54, 13, 24,  0, 39,
+           39, 21, 15, 18,  8, 21, 17, 30,  7, 62, 47, 46,  2,  4, 27, 55, 32,
+           15, 42, 49, 15, 13, 21, 40, 12,  6, 35, 34,  4, 26, 49, 38])
 
 
+
+显然，目前的example_batch_predictions是没有意义的：还没有训练过的模型，怎么能给出有意思的结果呢？
 
 
 ```python
@@ -470,9 +473,9 @@ print("Next Char Predictions: \n", repr("".join(idx2char[sampled_indices])))
 ```
 
     Input: 
-     'grave elders, to desire\nThe present consul, and last general\nIn our well-found successes, to report\n'
+     "he course, I like it not.\n\nPARIS:\nImmoderately she weeps for Tybalt's death,\nAnd therefore have I li"
     Next Char Predictions: 
-     "!zyOx$,GjsNOXIC3FJ-f;WYN;iCCSYXwM'KwNLza?HAtpST\nsa'oCxeem\ny\n,b\nsYu3xdJwPK:XZ'QAYiOdyA?poxXteLrYKiiJ$"
+     "UWbTTbG!JyZkKjMlfg'E&XK&zVItZHUhWH-Sg3HgPPS3PNsHP?Vu;igXbtAy,EWpAL\naaICF.IER-xih!&OqTCdkCAIb?,WV&NkZ"
 
 
 # 定义优化器和损失函数
@@ -488,7 +491,7 @@ print("scalar_loss:      ", example_batch_loss.numpy().mean())
 ```
 
     Prediction shape:  (32, 100, 65)  # (batch_size, sequence_length, vocab_size)
-    scalar_loss:       4.1742725
+    scalar_loss:       4.174124
 
 
 
@@ -506,6 +509,8 @@ checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
 恢复checkpoint
 如何检测checkoutpoint是否存在？
 
+如何解读model.summary()的输出，尤其维度的变化和参数的数量？
+
 
 ```python
 ckpt = tf.train.latest_checkpoint(checkpoint_dir)
@@ -516,6 +521,22 @@ if ckpt != None:
   model.build(tf.TensorShape([1, None]))
   model.summary()
 ```
+
+    load model from checkpoint
+    _________________________________________________________________
+    Layer (type)                 Output Shape              Param #   
+    =================================================================
+    embedding_1 (Embedding)      (32, None, 256)           16640     
+    _________________________________________________________________
+    lstm_1 (LSTM)                (32, None, 512)           1574912   
+    _________________________________________________________________
+    dense_1 (Dense)              (32, None, 65)            33345     
+    =================================================================
+    Total params: 1,624,897
+    Trainable params: 1,624,897
+    Non-trainable params: 0
+    _________________________________________________________________
+
 
 
 ```python
@@ -539,27 +560,27 @@ history = model.fit(dataset.repeat(), epochs=EPOCHS,
     Epoch 1/3
 
 
-    /home/subaochen/anaconda3/envs/tf1-cpu/lib/python3.7/site-packages/tensorflow/python/ops/gradients_impl.py:110: UserWarning: Converting sparse IndexedSlices to a dense Tensor of unknown shape. This may consume a large amount of memory.
+    /home/subaochen/anaconda3/envs/tf1/lib/python3.7/site-packages/tensorflow/python/ops/gradients_impl.py:110: UserWarning: Converting sparse IndexedSlices to a dense Tensor of unknown shape. This may consume a large amount of memory.
       "Converting sparse IndexedSlices to a dense Tensor of unknown shape. "
 
 
-    347/348 [============================>.] - ETA: 1s - loss: 2.3692WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f79a03ee828>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
+    347/348 [============================>.] - ETA: 1s - loss: 1.3502WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f42d407c898>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
     
     Consider using a TensorFlow optimizer from `tf.train`.
-    WARNING:tensorflow:From /home/subaochen/anaconda3/envs/tf1-cpu/lib/python3.7/site-packages/tensorflow/python/keras/engine/network.py:1436: update_checkpoint_state (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+    WARNING:tensorflow:From /home/subaochen/anaconda3/envs/tf1/lib/python3.7/site-packages/tensorflow/python/keras/engine/network.py:1436: update_checkpoint_state (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
     Instructions for updating:
     Use tf.train.CheckpointManager to manage checkpoints rather than manually editing the Checkpoint proto.
-    348/348 [==============================] - 574s 2s/step - loss: 2.3678
+    348/348 [==============================] - 590s 2s/step - loss: 1.3499
     Epoch 2/3
-    347/348 [============================>.] - ETA: 1s - loss: 1.7566WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f79a03ee828>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
+    347/348 [============================>.] - ETA: 1s - loss: 1.3215WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f42d407c898>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
     
     Consider using a TensorFlow optimizer from `tf.train`.
-    348/348 [==============================] - 563s 2s/step - loss: 1.7563
+    348/348 [==============================] - 550s 2s/step - loss: 1.3213
     Epoch 3/3
-    347/348 [============================>.] - ETA: 1s - loss: 1.5764WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f79a03ee828>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
+    347/348 [============================>.] - ETA: 1s - loss: 1.2981WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f42d407c898>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
     
     Consider using a TensorFlow optimizer from `tf.train`.
-    348/348 [==============================] - 560s 2s/step - loss: 1.5760
+    348/348 [==============================] - 533s 2s/step - loss: 1.2979
 
 
 # 绘制训练图表
@@ -567,10 +588,6 @@ history = model.fit(dataset.repeat(), epochs=EPOCHS,
 
 ```python
 import matplotlib.pyplot as plt
-```
-
-
-```python
 history_dict = history.history
 history_dict.keys()
 loss=history_dict['loss']
@@ -586,32 +603,33 @@ plt.show()
 ```
 
 
-![png](/images/output_50_0.png)
+    <Figure size 640x480 with 1 Axes>
 
 
 # 产生文本
 
 ## 恢复到最新的checkpoint
 
-这个步骤是不是应该放在训练之前，以便积累训练的成果？
+使用batch_size=1重新构建模型，为下面的文本生成做准备。此时模型不需要重新训练，因为模型结构没有发生变化，只是改变了输入样本的batch_size而已：实际预测时，batch_size需要设置为1。
 
 
 ```python
 ckpt = tf.train.latest_checkpoint(checkpoint_dir)
 model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=1)
 model.load_weights(ckpt)
-model.build(tf.TensorShape([1, None]))
+# 在这里调用build多此一举了，因为在build_model中已经传入了batch_size=1这个参数用于构建Input_shape
+#model.build(tf.TensorShape([1, None])) 
 model.summary()
 ```
 
     _________________________________________________________________
     Layer (type)                 Output Shape              Param #   
     =================================================================
-    embedding_1 (Embedding)      (1, None, 256)            16640     
+    embedding_9 (Embedding)      (1, None, 256)            16640     
     _________________________________________________________________
-    lstm_1 (LSTM)                (1, None, 512)            1574912   
+    lstm_9 (LSTM)                (1, None, 512)            1574912   
     _________________________________________________________________
-    dense_1 (Dense)              (1, None, 65)             33345     
+    dense_9 (Dense)              (1, None, 65)             33345     
     =================================================================
     Total params: 1,624,897
     Trainable params: 1,624,897
@@ -621,7 +639,7 @@ model.summary()
 
 ## 进行预测
 
-model可以接受任意长度的字符串作为参数。实际上，无论多长的字符串，model都是需要一个一个进行处理的，最终给出的是每个输入字符对应的预测字符。参考下图了解shape在各个过程的变化（出处：https://www.tensorflow.org/tutorials/sequences/text_generation）：
+model可以接受任意长度的字符串作为参数，因为创建模型时，给出的batch_input_shape为（batch_size, None），而重新构建模型时指定了batch_size=1。实际上，无论多长的字符串，model都是需要一个一个进行处理的，最终给出的是每个输入字符对应的预测字符。参考下图了解shape在各个过程的变化（出处：https://www.tensorflow.org/tutorials/sequences/text_generation）：
 ![](/images/text_generation_training.png)
 
 ## 如何观察预测结果？
@@ -653,14 +671,18 @@ def generate_text(model, start_string):
   model.reset_states()
   for i in range(num_generate):
       # why not call model.predict()?
+      # predictions的shape：(1,None,65)
       predictions = model(input_eval)
       #print("predictions.shape:",predictions.shape)
       
       # remove the batch dimension
+      # 此时的predictions的shape：(None,65)
       predictions = tf.squeeze(predictions, 0)
+      #print(predictions.shape)
 
       # using a multinomial distribution to predict the word returned by the model
       predictions = predictions / temperature
+      #print(predictions)
       predicted_id = tf.random.categorical(predictions, num_samples=1)[-1,0].numpy()
       #print("predicted_id:",predicted_id)
       
@@ -676,33 +698,40 @@ print(generate_text(model, start_string=u"First:"))
 ```
 
     First:
-    Set me in my life, shill saved we cannot pirture houses,
-    From Lord unnour forth mine readfround placmif:
-    She stratue here again; desembred, so is ntwire gronation.
-    The lave,
-    Ther away the prayers.
+    Lo, good up thy more I have not of Giond:'
+    'Peasur
+    To me with him: my lewis affection, angry I think in
+    thee, each death, for the neck'st ded in plage.
+     as I was darring herein.
     
-    MENENIUS:
-    Now, hou werpho thy plafe, made as honest the comes:
-    Becond eemill. Reventant and drave us.
-    How not thou art of Namicient detraced prevends,
-    Upon he gids trual by a man farewence to due,
-    Or, look tho amfition Tuurssly should in:
-    Our worthing reture in the fault him myself
-    As commonian dried, command slamen-w
-    Now he
-    wor good our base sol, nither command some forsuar: he has doy wit
-    such grong, his comfort o' thair prest, brave
-    The ablickle dreigns.
+    MARIANA:
+    I consured
+    To Buckingman:
+    I pray Marcius, have I see, mother, widow uncle,
+    The time that thou sets shall make the court,
+    Me at me please that gave strange of thy love,--
+    Chrom thee are bid her news a cruel,
+    Oub dreams did speak. it is but sent
+    Call my heart; was silence,
+    My most children in his accur
+    As country'M: I had rather to insule
+    Your miserace star'd treep to endured
+    Or else they remaised my mind of right,
+    And thusk the fatal so? Twich thou done thereig will I seel.
     
-    MORCALA: I love this dead, and fallow
-    For Chimaifor petchantom gentles wild ready,
-    that if through beack in none revongering friends,
-    Ceftrence is a bleasure of life, trange, drance'd
-    The grave dain stirst of the sunks te and Gap's Hancy'd dead,
-    Befuir is than we preaso, nos. What, wen it it
-    Of thing twong of your reportity,
-    Alassows up
+    That here shrait blesh you offer'd down.
+    
+    BENVOLIO:
+    For many change pabest full unlearned.
+    
+    HORSTBESs to me my in preyched cover:
+    Therefy he you love Henry
+    Of our anmory under no more; and 'twere now revime your leagues, and
+    yet
+    O'er--not as once woman: we would cleave with took pleasure
+    That as I would bear haintainst it again.
+    
+    
 
 
 # 后记
