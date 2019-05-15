@@ -2,7 +2,7 @@
 title: 使用RNN预测股票下一日的收盘价
 type: post
 categories:
-- 深度学习
+- deeplearning
 layout: post
 date: 2019-05-12
 tags: [深度学习, RNN, LSTM]

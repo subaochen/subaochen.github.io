@@ -2,7 +2,7 @@
 title: tensorflow的二项分布和多项分布
 type: post
 categories:
-- 深度学习
+- deeplearning
 layout: post
 date: 2019-05-14
 tags: [深度学习, categorical, binomial, tensorflow, random]
@@ -16,6 +16,8 @@ comments: true
 tf.random.categorical实现了多项分布的采样，其输入通常是神经网络的输出，详情可以参见：https://stackoverflow.com/questions/55063120/can-anyone-give-a-tiny-example-to-explain-the-params-of-tf-random-categorical
 
 此方法替代了过时的multinomial方法。
+
+本案例运行于tensorflow 1.13。
 
 
 ```python

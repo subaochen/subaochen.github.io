@@ -2,7 +2,7 @@
 title: tensorflow中的索引和切片操作
 type: post
 categories:
-- 深度学习
+- deeplearning
 layout: post
 date: 2019-05-14
 tags: [numpy, 切片]

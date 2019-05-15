@@ -33,3 +33,13 @@ jupyterlab的作者为何这样安排，有点混乱。
 > jt -t chesterish
 
 然后就可以在jupyter界面看到舒服的深色主题了。
+
+# 常用快捷键
+
+* `a`: 在上方（above）插入cell。
+* `b`: 在下方（below）插入cell。
+* `dd`：删除当前cell。
+
+# 运行shell命令
+
+通过在命令前使用`!`可直接执行shell命令。

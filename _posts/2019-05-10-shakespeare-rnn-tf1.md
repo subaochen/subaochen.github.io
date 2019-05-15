@@ -2,7 +2,7 @@
 title: 使用RNN生成文本-shakespeare
 type: post
 categories:
-- 深度学习
+- deeplearning
 layout: post
 date: 2019-05-10
 tags: [深度学习, RNN]
