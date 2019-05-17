@@ -1,5 +1,19 @@
+---
+title: 强化学习笔记
+type: post
+categories:
+- deeplearning
+layout: post
+date: 2019-05-17
+tags: [深度学习, 强化学习]
+status: publish
+published: true
+comments: true
+---
+
 # 强化学习的几个关键词
-下面是强化学习各个环节的“角色”，在程序中一般也是这样命名的：
+
+下面是强化学习各个环节的“角色”，在程序中一般也是这样命名相关变量的：
 
 * **agent**，智能体，游戏中的玩家。
 * **env**，环境，或者系统环境（System Environment）。

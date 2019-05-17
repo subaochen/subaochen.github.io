@@ -39,6 +39,9 @@ jupyterlab的作者为何这样安排，有点混乱。
 * `a`: 在上方（above）插入cell。
 * `b`: 在下方（below）插入cell。
 * `dd`：删除当前cell。
+* `m`: 把cell格式变为markdown
+* `y`：把cell格式变为代码
+* `j`/`k`: 焦点移动到上面/下面的cell
 
 # 运行shell命令
 
