@@ -1,0 +1,29 @@
+---
+title: 动态贝叶斯网络的理解
+type: post
+categories:
+- math
+layout: post
+date: 2019-05-17
+tags: [贝叶斯公司, 动态贝叶斯网络]
+status: publish
+published: true
+comments: true
+---
+
+# 贝叶斯公式
+
+在机器学习领域，无论怎么强调贝叶斯公式都不过分，因此值得再复习一下。
+$$
+P(A|B) = \frac{P(A)P(B|A)}{P(B)}
+$$
+贝叶斯公式的直观意义是：
+
+其中，$P(A|B)$通常被称为后验概率，$P(A)$、$P(B)$通常被称为先验概率
+
+# 贝叶斯网络
+
+
+
+# 动态贝叶斯网络
+
