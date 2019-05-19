@@ -4,7 +4,6 @@ type: post
 categories:
 - deeplearning
 layout: post
-date: 2019-05-17
 tags: [tensorflow, None]
 status: publish
 published: true
