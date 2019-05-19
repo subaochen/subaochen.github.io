@@ -36,12 +36,15 @@ jupyterlab的作者为何这样安排，有点混乱。
 
 # 常用快捷键
 
+* `esc`：离开当前的模式，这和vi非常相似。实际上，jupyer的很多快捷键似乎就是从vi借鉴过来的。
 * `a`: 在上方（above）插入cell。
 * `b`: 在下方（below）插入cell。
 * `dd`：删除当前cell。
 * `m`: 把cell格式变为markdown
 * `y`：把cell格式变为代码
 * `j`/`k`: 焦点移动到上面/下面的cell
+
+实际上，掌握了`a/b/m/y/j/k`这几个快捷键，几乎就可以抛开鼠标，愉快的玩耍jupyter了。
 
 # 运行shell命令
 
