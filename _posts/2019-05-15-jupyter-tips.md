@@ -49,3 +49,8 @@ jupyterlab的作者为何这样安排，有点混乱。
 # 运行shell命令
 
 通过在命令前使用`!`可直接执行shell命令。
+
+# 安装jupyter扩展管理器
+
+`pip install jupyter_contrib_nbextensions`即可安装jupyter的扩展管理器，然后启动notebook后就可以方便的管理各种插件了。
+

@@ -29,5 +29,5 @@ categories_path: categories/
 tags_path: tags/
 
 
-plugins:
+plugins_dir:
   - jekyll-sitemap
