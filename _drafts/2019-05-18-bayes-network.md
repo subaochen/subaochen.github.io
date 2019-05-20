@@ -6,8 +6,8 @@ categories:
 layout: post
 date: 2019-05-17
 tags: [贝叶斯公司, 动态贝叶斯网络]
-status: publish
-published: true
+status: draft
+published: false
 comments: true
 ---
 
