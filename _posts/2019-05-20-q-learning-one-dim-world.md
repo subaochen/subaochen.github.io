@@ -136,10 +136,10 @@ rl = reinforcement learning
 
 画个图来进一步理解：
 
-![](images/rl/q-predict-vs-q-target.png)
+![](/images/rl/q-predict-vs-q-target.png)
 
 下图说明了Q Learning的算法(see: https://www.cse.unsw.edu.au/~cs9417ml/RL1/algorithms.html )：
-![](images/rl/qalg.gif)
+![](/images/rl/qalg.gif)
 
 
 ```python
