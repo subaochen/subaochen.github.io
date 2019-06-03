@@ -9,6 +9,7 @@ date: 2019-05-30
 tags: [deeplearning,mdp,reinforcement learning]
 status: publish
 published: true
+use_math: true
 comments: true
 ---
 
@@ -17,10 +18,14 @@ david sliver大神确实功底深厚，将MDP由浅入深由表及里的讲了�
 # 马尔科夫属性（Markov Property）
 
 马尔科夫属性是指当前状态仅取决于上一刻的状态，和历史状态无关，即有公式：
+
 $$
 P(S_{t+1}|S_t)=P(S_{t+1}|S_1,S_2,...,S_t)
 $$
-进一步的，假设$S_1,S_2,...,S_t$相互独立：
+
+
+进一步的，假设$$S_1,S_2,...,S_t$$相互独立：
+
 $$
 P(S_1,S_2,...,S_t)=P(S_1)P(S_2|S_1)P(S_3|S_1,S_2)...P(S_t|S_1,S_2,...,S_{t-1})\\
 =P(S_1)P(S_2|S_1)P(S_3|S_2)...P(S_t|S_{t-1})
@@ -29,12 +34,15 @@ $$
 # 状态转移矩阵（State Transition Matrix）
 
 状态s到s'（在状态序列中，s'表示状态s的下一个状态）的状态转移概率表示为：
+
 $$
 P_{ss'}=P(S_{t+1}=s'|S_t=s)
 $$
+
 注意大写的S和小写的s的不同意义：大写的S表示一个随机变量，小写的s表示该随机变量当前的取值为s（或者s'）。
 
 假定问题的状态空间$S$为$(S_1,S_2,...,S_n)$，则状态转移矩阵为：
+
 $$
 P=\left[\begin{array}{ccc}
 P_{S_1S_1} & P_{S_1S_2} & ... & P_{S_1S_n}\\ 
@@ -44,9 +52,11 @@ P_{S_nS_1} & P_{S_nS_2} & ... & P_{S_nS_n}
 
 \end{array}\right]
 $$
-其中，$P_{S_1S_2}$表示状态$S_1$到状态$S_2$的概率。在状态转移矩阵中，每一行的概率之和为1，也很可能存在多个为0的列。
 
-有了状态转移矩阵，那么从状态空间$S$的任意采样都可以通过状态转移矩阵计算获得该序列的概率。比如存在一个状态空间$S$的采样序列如下$S_1S_3S_3S_5S_7$，则有该序列的概率为：
+其中，$$P_{S_1S_2}$$表示状态$$S_1$$$到状态$$$S_2$$的概率。在状态转移矩阵中，每一行的概率之和为1，也很可能存在多个为0的列。
+
+有了状态转移矩阵，那么从状态空间$S$的任意采样都可以通过状态转移矩阵计算获得该序列的概率。比如存在一个状态空间$S$的采样序列如下$$S_1S_3S_3S_5S_7$$，则有该序列的概率为：
+
 $$
 P=P(S_1S_3S_3S_5S_7)=P_{S_1}P_{S_1S_3}P_{S_3S_3}P_{S_3S_5}P_{S_5S_7}
 $$
@@ -70,6 +80,7 @@ $$
 ![makov-chains-student-1](images/rl/makov-chains-student-1.png)
 
 由此，概率转移矩阵为（矩阵的列顺序为C1C2C3GPSW，如果能够标出矩阵行和列的label能够更清楚的说明问题，可惜在markdown里面不知道如何操作）：
+
 $$
 P=\left[\begin{array}{ccc}
 &0.5&&&&&0.5\\
@@ -83,6 +94,7 @@ P=\left[\begin{array}{ccc}
 \end{array}
 \right]
 $$
+
 于是，下面的采样序列都是合理的，也可以计算这样的采样序列的达成概率。
 
 * C1C2C3PS：非常认真的学生
@@ -91,12 +103,24 @@ $$
 
 # Markov Reward Process
 
-这是强化学习中特有的结构：在Markov Process中加入reward机制，即给当前状态增加一个reward来表示这个状态到底有多好，或者有多坏，这样MPR就是一个4元组$<S,P,R,\gamma>$，其中：
+这是强化学习中特有的结构：在Markov Process中加入reward机制，即给当前状态增加一个reward来表示**当前**这个状态到底有多好，或者有多坏，这样MPR就是一个4元组$<S,P,R,\gamma>$，其中：
 
 * S为状态空间
 * P为状态转移矩阵
-* R为reward function，
-* $\gamma$为衰减因子
+* R为reward function
+* $$\gamma$$为衰减因子，[0,1]，$$\gamma$$越大，则远期的reward作用越大，在return的定义中的可以看的更明显。
+
+这里不太好理解的是R，其定义为
+
+$$
+R_s=\mathbb{E}[R_{t+1}|S_t=s]
+$$
+
+$$R_s$$表征了t时刻状态$$S_t$$的reward值。举一个例子，MRP好比行军打仗攻城拔寨，每攻下一座城池战争即进入一个新的状态（status），并且立刻获得一个奖赏（reward）。也就是说，MRP中的reward是immediately  reward，和未来的状态没有任何关系。
+
+那么为什么其定义中使用了$$R_{t+1}$$？
+
+期望在这里有什么用意呢？
 
 
 # 马尔科夫链（Markov Chain）

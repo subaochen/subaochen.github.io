@@ -12,10 +12,13 @@ disqus: softlab-sdut
 
 # Build settings
 highlighter: rouge
-markdown: kramdown
+#markdown: kramdown
 kramdown:
     syntax_highlighter: rouge
     extensions: ["fenced_code_blocks", "autolink", "tables", "smart"]
+#
+# support math in github.io
+#markdown: maruku
 
 sass:
     style: :compressed
