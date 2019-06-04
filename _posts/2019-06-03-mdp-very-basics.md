@@ -94,7 +94,7 @@ $$
 
 假设电池电量高时research完成后电量仍然高的概率为$$\alpha$$，电池电量低时research动作完成后电量依然低的概率为$$\beta$$，于是本案例可表示为下图，其中无背景圆圈表示机器人的电池电量状态空间，黑色圆点表示机器人的动作空间。弧线上标注的是动作的概率及其reward值。可以看出，每一个动作的总的概率和为1。这是一个Agent视角的流程图。
 
-![mdp-collect-cans-case](images/rl/mdp-collect-cans-case.png)
+![mdp-collect-cans-case](/images/rl/mdp-collect-cans-case.png)
 
 通过概率转移矩阵的方式描述本案例：
 
@@ -110,8 +110,6 @@ $$
 | low  | wait     | low  | $$r_{wait}$$    | 1            |
 | low  | recharge | high | 0               | 1            |
 | low  | recharge | low  | --              | 0            |
-
-
 
 
 

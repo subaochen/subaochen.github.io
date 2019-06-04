@@ -380,7 +380,17 @@ em {
     } 
 }
 
-
 @import "base";
 @import "syntax-highlighting";
 
+th,td {
+    border:1px solid #ddd;
+    padding:6px 13px;
+}
+
+thead{
+    th{
+        background-color: #2674BA;
+        color: white;
+    }
+}
