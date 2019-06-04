@@ -51,7 +51,7 @@ $$
 
 dynamics function是一个四元概率函数，是对Environment的建模，即将Agent看做一个白盒（合理的假设，因为Agent对我们而言是完全可控的），则Agent的输入s和输出a对于Environment而言可以看做是Environment的输入，因此dynamics function的意义为：给定状态s和动作a，Environment输出下一时刻的状态s'及其相应的reward r的概率。
 
-有了dynamics function，上述Environment的概率可以表示为（不知是否正确？）：
+有了dynamics function，上述Environment的概率可以表示为（<font color="red">不知是否正确？</font>）：
 
 $$
 p(s',r\mid a) = \sum_{s} p(s',r\mid s,a)
@@ -69,7 +69,7 @@ $$
 r(s,a)=\mathbb{E}[R_t\mid S_{t-1}=s, A_{t-1}=a]=\sum_{r}r\sum_{s}p(s',r\mid s,a)
 $$
 
-对于三元组<s,a,s'>的reward期望，可以表示为（我得出的结论多了r的乘积项，不知道哪里出错了？）：
+对于三元组<s,a,s'>的reward期望，可以表示为（<font color="red">我得出的结论多了r的乘积项，不知道哪里出错了？</font>）：
 
 $$
 r(s,a,s')=\mathbb{E}[R_t\mid S_{t-1}=t,A_{t-1}=a,S_t=s']
