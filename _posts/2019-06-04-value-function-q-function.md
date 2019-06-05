@@ -95,3 +95,7 @@ $$
 这就是状态价值函数的Bellman等式，即迭代公式。作者在这里有一段非常精彩的论述，摘录如下：
 
 > where it is implicit that the actions, a, are taken from the set $$A(s)$$, that the next states, $$s'$$ , are taken from the set $$S$$ (or from $$S+$$ in the case of an episodic problem), and thatt he rewards, $$r$$, are taken from the set $$R$$. Note also how in the last equation we havem erged the two sums, one over all the values of $$s'$$  and the other over all the values of $$r$$, into one sum over all the possible values of both. We use this kind of merged sum often to simplify formulas. Note how the final expression can be read easily as an expected value. It is really a sum over all values of the three variables, $$a$$, $$s'$$ , and $$r$$. For each triple, we compute its probability, $$\pi(a\mid s)p(s' , r \mid s, a)$$, weight the quantity in brackets by that probability, then sum over all possibilities to get an expected value.
+
+# 案例分析
+
+画出student mdp的状态转移图和backup diagram，计算state value & action value，最终给出矩阵的计算形式。
