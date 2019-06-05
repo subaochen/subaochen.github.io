@@ -43,9 +43,9 @@ $$
 
 $$\pi(a\mid s)$$是强化学习中需要优化的参数之一：在迭代优化过程中，需要不断调整$$\pi(a\mid s)$$使得最终的结果胜率最高。
 
-# value function和Q function
+# status value function和action value function
 
-$$v_{\pi}(s)$$表达了状态s在策略$$\pi$$下的好坏（价值），可以使用return的期望来衡量：
+$$v_{\pi}(s)$$表达了状态s在策略$$\pi$$下的好坏（**状态价值函数**），可以使用return的期望来衡量：
 
 $$
 v_{\pi}(s)=\mathbb{E_{\pi}}[G_t\mid S_t=s]=\mathbb{E_{\pi}}\left[\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}|S_t=s\right]
@@ -56,15 +56,11 @@ $$
 ![value-function-backup-diagram](/images/rl/value-function-backup-diagram.png)
 
 假设当前处于状态s，即$$S_t=s$$。在策略$$\pi$$的作用下，从状态s可以有三个动作可以选择，每个动作进入Environment后会在2个后续状态s'及其对应的reward：r，于是我们评价状态s的价值，就需要将最后一层的所有reward进行加权平均（求期望），因为最后一层所有的reward都是状态s的可能结果。这是一个递归的过程，即最后一层的状态s'还会有相应的动作a'，接着是新的状态s''......
-$$
-v_{\pi}(s)=\mathbb{E_{\pi}}[G_t\mid S_t=s]=\mathbb{E_{\pi}}[R_{t+1}+\gamma G_{t+1}\mid S_t=s]\\
-=\mathbb{E_{\pi}}[R_{t+1}+\gamma v_{\pi}(s')\mid S_t=s]
-$$
 
 
 因此，$$v_{\pi}(s)$$中的k表示计算第几层的return加权平均（通过student mdp的例子说明计算过程）
 
-q function表达了状态s在策略$$\pi$$下，采取动作a的好坏（价值）：
+$$q_{\pi}(s,,a)$$表达了状态s在策略$$\pi$$下，采取动作a的好坏（**动作价值函数**）：
 
 $$
 q_{\pi}(s,a)=\mathbb{E_{\pi}}[G_t\mid S_t=s,A_t=a]=\mathbb{E_{\pi}}\left[\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}|S_t=s,A_t=a\right]
@@ -74,13 +70,28 @@ $$
 
 ![q-function-backup-diagram](/images/rl/q-function-backup-diagram.png)
 
-从上图也可以看出$$q_{\pi}$$和$$v_{\pi}$$的关系：
+将$$q_{\pi}(a,s)$$进一步展开可得：
+$$
+q_{\pi}(a,s)=\sum_{r}\sum_{s'}p(s',r\mid a,s)[r+\gamma\mathbb{E_{\pi}}[G_{t+1}\mid S_{t+1}=s']\\
+=\sum_{r,s'}p(s',r\mid a,s)[r+\gamma v_{\pi}(s')]
+$$
+这是$$q_{\pi}(a,s)$$和$$v_{\pi}(s')$$的关系表达式，更能说明$$q_{\pi}(a,s)$$的计算过程：对于已知的<a,s>，Environment计算动作a的价值时是一个迭代的过程。比如在上图中，从节点a出发的下一个时刻的状态s'有两个，不妨记做$$s_{1}^{'}，s_{2}^{'}$$，其对应的reward分别为$$r_1$$和$$r_2$$，则$$q_{\pi}(a,s)$$的计算如下：
+$$
+q_{\pi}(a,s)=p(s_{1}^{'},r_1\mid a,s)[r_1+\gamma v_{\pi}(s_{1}^{'})]+p(s_{2}^{'},r_2\mid a,s)[r_2+\gamma v_{\pi}(s_{2}^{'})]
+$$
 
+
+从上图也可以看出$$q_{\pi}$$和$$v_{\pi}$$的关系：
 $$
 v_{\pi}(s)=\sum_{a}\pi(a\mid s)q_{\pi}(s,a)
 $$
 
-同理：
+将$$q_{\pi}(s,a)$$的展开式代入可得：
+
 $$
-q_{\pi}(s,a)=
+v_{\pi}(s)=\sum_{a}\pi(a\mid s)\sum_{r,s'}p(s',r\mid a,s)[r+\gamma v_{\pi}(s')]
 $$
+
+这就是状态价值函数的Bellman等式，即迭代公式。作者在这里有一段非常精彩的论述，摘录如下：
+
+> where it is implicit that the actions, a, are taken from the set $$A(s)$$, that the next states, $$s'$$ , are taken from the set $$S$$ (or from $$S+$$ in the case of an episodic problem), and thatt he rewards, $$r$$, are taken from the set $$R$$. Note also how in the last equation we havem erged the two sums, one over all the values of $$s'$$  and the other over all the values of $$r$$, into one sum over all the possible values of both. We use this kind of merged sum often to simplify formulas. Note how the final expression can be read easily as an expected value. It is really a sum over all values of the three variables, $$a$$, $$s'$$ , and $$r$$. For each triple, we compute its probability, $$\pi(a\mid s)p(s' , r \mid s, a)$$, weight the quantity in brackets by that probability, then sum over all possibilities to get an expected value.
