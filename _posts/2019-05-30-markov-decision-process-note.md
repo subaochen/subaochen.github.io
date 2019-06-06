@@ -5,7 +5,7 @@ type: post
 categories:
 - deeplearning
 layout: post
-date: 2019-05-30
+date: 2019-06-06
 tags: [deeplearning,mdp,reinforcement learning]
 status: publish
 published: true
@@ -13,7 +13,7 @@ use_math: true
 comments: true
 ---
 
-david sliver大神确实功底深厚，将MDP由浅入深由表及里的讲了个透，整理笔记如下。
+david silver大神确实功底深厚，将MDP由浅入深由表及里的讲了个透，整理笔记如下。
 
 # 马尔科夫属性（Markov Property）
 
@@ -64,22 +64,22 @@ $$
 
 # 马尔科夫过程（Markov Process=Markov Chain ）
 
-马尔科夫过程是是一个二元组<S,P>，其中：
+马尔科夫过程是一个二元组<S,P>，其中：
 
 * S是状态空间
 * P是状态转移矩阵
 
 由S和P，我们可以对状态空间的任意采样进行概率计算，即该状态序列的达成概率。
 
-下面是一个有趣的例子（替换了原作中的Facebook和pub）。假设这门课只需要三节课就可结业，那么下图表达了同学们在学习过程中的各种状态及其转移概率。比如，上第一节课的时候，你有50%的概率顺利进入了第二节课，但是也有50%的概率经受不住微信的诱惑开始不停的刷。而刷微信容易上瘾，即90%的情况下你会不停的刷，直到某个时刻（10%的概率）重新回到第一节课。
+下面是一个有趣的例子（替换了原作中的Facebook为Wechat）。假设这门课只需要三节课就可结业，那么下图表达了同学们在学习过程中的各种状态及其转移概率。比如，上第一节课的时候，你有50%的概率顺利进入了第二节课，但是也有50%的概率经受不住微信的诱惑开始不停的刷。而刷微信容易上瘾，即90%的情况下你会不停的刷，直到某个时刻（10%的概率）重新回到第一节课。在第三节课，可能有40%的概率觉得差不多了，就到Pub喝点小酒庆祝......
 
-当然，这个例子的状态并没有完整描述上课的所有状态序列，这只是其中的一种可能状态序列。比如，本案例在上第三节课的时候你有40%的概率开始玩游戏，其实，有的同学从第一节课就开始玩游戏也未可知。
+当然，这个例子的状态图并没有完整描述上课的所有状态序列，这只是其中的一种可能状态序列。
 
 注意到，每个状态节点的出线概率之和一定为1。比如，第二节课有两条出线，一条指向S节点（概率为0.2），一条指向C3节点（概率为0.8）。这很容易理解：有几条出线代表了从当前状态存在几种转移到其他状态的路径。
 
-![makov-chains-student-1](images/rl/makov-chains-student-1.png)
+![makov-chains-student-1](images/rl/student-mdp-orig.png)
 
-由此，概率转移矩阵为（矩阵的列顺序为C1C2C3GPSW，如果能够标出矩阵行和列的label能够更清楚的说明问题，可惜在markdown里面不知道如何操作）：
+由此，概率转移矩阵为（矩阵的列顺序为C1C2C3PubPassPSLeepWechat，如果能够标出矩阵行和列的label能够更清楚的说明问题，可惜在markdown里面不知道如何操作）：
 
 $$
 P=\left[\begin{array}{ccc}
@@ -97,11 +97,11 @@ $$
 
 于是，下面的采样序列都是合理的，也可以计算这样的采样序列的达成概率。
 
-* C1C2C3PS：非常认真的学生
-* C1WWC1C2S：第一节课走神的学生
-* C1C2C3GC1WWWC1C2C3GC3PS：经常走神的学生
+* C1C2C3PassSleep：非常认真的学生
+* C1WechatWwchatC1C2Sleep：第一节课走神的学生
+* C1C2C3PubC1WechatWechatWechatC1C2C3PubC3PassSleep：经常走神的学生
 
-# Markov Reward Process
+# Markov Reward Process（MRP）
 
 这是强化学习中特有的结构：在Markov Process中加入reward机制，即给当前状态增加一个reward来表示**当前**这个状态到底有多好，或者有多坏，这样MPR就是一个4元组$<S,P,R,\gamma>$，其中：
 

@@ -98,4 +98,56 @@ $$
 
 # 案例分析
 
-画出student mdp的状态转移图和backup diagram，计算state value & action value，最终给出矩阵的计算形式。
+> 画出student mdp的状态转移图和backup diagram，计算state value & action value，最终给出矩阵的计算形式。
+
+下面是一个有趣的例子（替换了原作中的Facebook为Wechat），其中的圆圈代表了“状态”，方框代表了“结束状态”，每条线段（弧线）标明了状态转移的方向和概率。假设这门课只需要三节课就可结业，那么下图表达了同学们在学习过程中的各种状态及其转移概率。比如，上第一节课的时候，你有50%的概率顺利进入了第二节课，但是也有50%的概率经受不住微信的诱惑开始不停的刷。而刷微信容易上瘾，即90%的情况下你会不停的刷，直到某个时刻（10%的概率）重新回到第一节课。在第三节课，可能有40%的概率觉得差不多了，就到Pub喝点小酒庆祝......
+
+当然，这个例子的状态图并没有完整描述上课的所有状态序列，这只是其中的一种可能状态序列。
+
+注意到，每个状态节点的出线概率之和一定为1。比如，第二节课有两条出线，一条指向S节点（概率为0.2），一条指向C3节点（概率为0.8）。这很容易理解：有几条出线代表了从当前状态存在几种转移到其他状态的路径。
+
+![makov-chains-student-1](images/rl/student-mdp-orig.png)
+
+由此，概率转移矩阵为（矩阵的列顺序为C1C2C3PpassPubWechatSleep，如果能够标出矩阵行和列的label能够更清楚的说明问题，可惜在markdown里面不知道如何操作）：
+
+$$
+P=\left[\begin{matrix}
+&0.5&&&&&0.5\\
+&&0.8&&&0.2&\\
+&&&0.4&0.6&&\\
+0.2&0.4&0.4&&&&\\
+&&&&&1.0&\\
+&&&&&&\\
+0.1&&&&&&0.9\\
+
+\end{matrix}
+\right]
+$$
+
+于是，下面的采样序列都是合理的，也可以计算这样的采样序列的达成概率。
+
+* C1C2C3PassSleep：非常认真的学生
+* C1WechatWwchatC1C2Sleep：第一节课走神的学生
+* C1C2C3PubC1WechatWechatWechatC1C2C3PubC3PassSleep：经常走神的学生
+
+## 计算状态价值函数
+
+下面给状态转移图加上reward，即每个状态的immediately reward，参见下图：
+
+![student-mdp-reward](/home/subaochen/git/subaochen.github.io/images/rl/student-mdp-reward.png)
+
+下面以$$\gamma=1$$为例，计算节点C3的价值，如下图所示，节点C3的价值和C3的即时奖励以及下一节点的价值有关（根据状态价值函数的递推公式）。显然，Pass节点的价值为10。
+
+![student-mdp-reward-c3](/home/subaochen/git/subaochen.github.io/images/rl/student-mdp-reward-c3.png)
+
+上图中，计算C3节点的价值时使用到了Pub节点的价值，那么Pub节点的价值0.8是如何计算出来的呢？实际上，假设C1，C2，C3，Pass，Pub，Wechat节点的价值分别为v1,v2,v3,v4,v5,v6，我们可以列出如下的方程：
+$$
+v1=-2+0.5*v2+0.5*v6\\
+v2=-2+0.8*v3\\
+v3=-2+0.6*v4+0.4*v5\\
+v4=10\\
+v5=1+0.2*v1+0.4*v2+0.4*v3\\
+v6=-1+0.1*v1+0.9*v6
+$$
+
+

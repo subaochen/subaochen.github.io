@@ -69,8 +69,9 @@ $$
 r(s,a)=\mathbb{E}[R_t\mid S_{t-1}=s, A_{t-1}=a]=\sum_{r}r\sum_{s}p(s',r\mid s,a)
 $$
 
-对于三元组<s,a,s'>的reward期望，可以表示为（<font color="red">我得出的结论多了r的乘积项，不知道哪里出错了？</font>）：
+$$r(s,a,s')$$则是一个表示即时奖励的标量函数，即Agent根据当前状态s做出动作a之后，环境在反馈一个s'的同时，也会反馈一个相应的reward。
 
+对于三元组<s,a,s'>的reward期望，可以表示为（<font color="red">我得出的结论多了r的乘积项，不知道哪里出错了？</font>）：
 $$
 r(s,a,s')=\mathbb{E}[R_t\mid S_{t-1}=t,A_{t-1}=a,S_t=s']
 \\=\sum_{r}r p(r\mid s,a,s')
