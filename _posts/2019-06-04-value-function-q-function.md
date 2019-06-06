@@ -104,7 +104,7 @@ $$
 
 注意到，每个状态节点的出线概率之和一定为1。比如，第二节课有两条出线，一条指向S节点（概率为0.2），一条指向C3节点（概率为0.8）。这很容易理解：有几条出线代表了从当前状态存在几种转移到其他状态的路径。
 
-![makov-chains-student-1](images/rl/student-mdp-orig.png)
+![makov-chains-student-1](/images/rl/student-mdp-orig.png)
 
 由此，概率转移矩阵为（矩阵的列顺序为C1C2C3PpassPubWechatSleep，如果能够标出矩阵行和列的label能够更清楚的说明问题，可惜在markdown里面不知道如何操作）：
 
@@ -128,13 +128,14 @@ $$
 
 下面给状态转移图加上reward，即每个状态的immediately reward，参见下图：
 
-![student-mdp-reward](/home/subaochen/git/subaochen.github.io/images/rl/student-mdp-reward.png)
+![student-mdp-reward](/images/rl/student-mdp-reward.png)
 
 下面以$$\gamma=1$$为例，计算节点C3的价值，如下图所示，节点C3的价值和C3的即时奖励以及下一节点的价值有关（根据状态价值函数的递推公式）。显然，Pass节点的价值为10。
 
-![student-mdp-reward-c3](/home/subaochen/git/subaochen.github.io/images/rl/student-mdp-reward-c3.png)
+![student-mdp-reward-c3](/images/rl/student-mdp-reward-c3.png)
 
 上图中，计算C3节点的价值时使用到了Pub节点的价值，那么Pub节点的价值0.8是如何计算出来的呢？实际上，假设C1，C2，C3，Pass，Pub，Wechat，Sleep节点的价值分别为v1,v2,v3,v4,v5,v6,v7，我们可以列出如下的方程：
+
 $$
 \begin{align}
 v1&=-2+\gamma(0.5*v2+0.5*v6)\\
@@ -148,6 +149,7 @@ v7&=0
 $$
 
 写成矩阵的形式为：
+
 $$
 \left[\begin{matrix}
 v1\\v2\\v3\\v4\\v5\\v6\\v7
@@ -168,14 +170,19 @@ v1\\v2\\v3\\v4\\v5\\v6\\v7
 v1\\v2\\v3\\v4\\v5\\v6\\v7
 \end{matrix}\right]
 $$
+
 即：
+
 $$
 \mathcal{v}=\mathcal{R}+\gamma\mathcal{P}\mathcal{v}
 $$
+
 对于小规模MDP问题，可以直接矩阵求解：
+
 $$
 \mathcal{v}=(1-\gamma\mathcal{P})^{-1}\mathcal{R}
 $$
+
 结果如下图所示：
 
-![student-mdp-status-value](../images/rl/student-mdp-status-value.png)
+![student-mdp-status-value](/images/rl/student-mdp-status-value.png)
