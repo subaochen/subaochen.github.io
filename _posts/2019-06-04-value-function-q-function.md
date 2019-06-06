@@ -25,12 +25,12 @@ $$
 $$G_t$$可以表示为迭代的形式（递推公式）：
 
 $$
-G_t=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\gamma^3R_{t+4}+\ldots\\
-=R_{t+1}+\gamma(R_{t+2}+\gamma R_{t+3}+\gamma^2R_{t+4}+\ldots)\\
-=R_{t+1}+\gamma G_{t+1}
+\begin{align}
+G_t&=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\gamma^3R_{t+4}+\ldots\\
+&=R_{t+1}+\gamma(R_{t+2}+\gamma R_{t+3}+\gamma^2R_{t+4}+\ldots)\\
+&=R_{t+1}+\gamma G_{t+1}
+\end{align}
 $$
-
-
 
 有两点需要特别注意：
 
@@ -71,17 +71,23 @@ $$
 ![q-function-backup-diagram](/images/rl/q-function-backup-diagram.png)
 
 将$$q_{\pi}(a,s)$$进一步展开可得：
+
 $$
-q_{\pi}(a,s)=\sum_{r}\sum_{s'}p(s',r\mid a,s)[r+\gamma\mathbb{E_{\pi}}[G_{t+1}\mid S_{t+1}=s']\\
-=\sum_{r,s'}p(s',r\mid a,s)[r+\gamma v_{\pi}(s')]
+\begin{align}
+q_{\pi}(a,s)&=\sum_{r}\sum_{s'}p(s',r\mid a,s)[r+\gamma\mathbb{E_{\pi}}[G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_{r,s'}p(s',r\mid a,s)[r+\gamma v_{\pi}(s')]
+\end{align}
 $$
+
 这是$$q_{\pi}(a,s)$$和$$v_{\pi}(s')$$的关系表达式，更能说明$$q_{\pi}(a,s)$$的计算过程：对于已知的<a,s>，Environment计算动作a的价值时是一个迭代的过程。比如在上图中，从节点a出发的下一个时刻的状态s'有两个，不妨记做$$s_{1}^{'}，s_{2}^{'}$$，其对应的reward分别为$$r_1$$和$$r_2$$，则$$q_{\pi}(a,s)$$的计算如下：
+
 $$
 q_{\pi}(a,s)=p(s_{1}^{'},r_1\mid a,s)[r_1+\gamma v_{\pi}(s_{1}^{'})]+p(s_{2}^{'},r_2\mid a,s)[r_2+\gamma v_{\pi}(s_{2}^{'})]
 $$
 
 
 从上图也可以看出$$q_{\pi}$$和$$v_{\pi}$$的关系：
+
 $$
 v_{\pi}(s)=\sum_{a}\pi(a\mid s)q_{\pi}(s,a)
 $$
