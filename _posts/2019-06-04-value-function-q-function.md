@@ -98,8 +98,6 @@ $$
 
 # 案例分析
 
-> 画出student mdp的状态转移图和backup diagram，计算state value & action value，最终给出矩阵的计算形式。
-
 下面是一个有趣的例子（替换了原作中的Facebook为Wechat），其中的圆圈代表了“状态”，方框代表了“结束状态”，每条线段（弧线）标明了状态转移的方向和概率。假设这门课只需要三节课就可结业，那么下图表达了同学们在学习过程中的各种状态及其转移概率。比如，上第一节课的时候，你有50%的概率顺利进入了第二节课，但是也有50%的概率经受不住微信的诱惑开始不停的刷。而刷微信容易上瘾，即90%的情况下你会不停的刷，直到某个时刻（10%的概率）重新回到第一节课。在第三节课，可能有40%的概率觉得差不多了，就到Pub喝点小酒庆祝......
 
 当然，这个例子的状态图并没有完整描述上课的所有状态序列，这只是其中的一种可能状态序列。
@@ -112,25 +110,21 @@ $$
 
 $$
 P=\left[\begin{matrix}
-&0.5&&&&&0.5\\
-&&0.8&&&0.2&\\
-&&&0.4&0.6&&\\
+&0.5&&&&0.5&\\
+&&0.8&&&&0.2\\
+&&&0.6&0.4&&\\
+&&&&&&1.0\\
 0.2&0.4&0.4&&&&\\
-&&&&&1.0&\\
-&&&&&&\\
-0.1&&&&&&0.9\\
-
-\end{matrix}
-\right]
+0.1&&&&&0.9&\\
+&&&&&&
+\end{matrix}\right]
 $$
 
 于是，下面的采样序列都是合理的，也可以计算这样的采样序列的达成概率。
 
-* C1C2C3PassSleep：非常认真的学生
-* C1WechatWwchatC1C2Sleep：第一节课走神的学生
-* C1C2C3PubC1WechatWechatWechatC1C2C3PubC3PassSleep：经常走神的学生
-
-## 计算状态价值函数
+* C1-C2-C3-Pass-Sleep：非常认真的学生
+* C1-Wechat-Wechat-C1-C2-Sleep：第一节课走神的学生
+* C1-C2-C3-Pub-C1-Wechat-Wechat-Wechat-C1-C2-C3-Pub-C3-Pass-Sleep：经常走神的学生
 
 下面给状态转移图加上reward，即每个状态的immediately reward，参见下图：
 
@@ -140,14 +134,48 @@ $$
 
 ![student-mdp-reward-c3](/home/subaochen/git/subaochen.github.io/images/rl/student-mdp-reward-c3.png)
 
-上图中，计算C3节点的价值时使用到了Pub节点的价值，那么Pub节点的价值0.8是如何计算出来的呢？实际上，假设C1，C2，C3，Pass，Pub，Wechat节点的价值分别为v1,v2,v3,v4,v5,v6，我们可以列出如下的方程：
+上图中，计算C3节点的价值时使用到了Pub节点的价值，那么Pub节点的价值0.8是如何计算出来的呢？实际上，假设C1，C2，C3，Pass，Pub，Wechat，Sleep节点的价值分别为v1,v2,v3,v4,v5,v6,v7，我们可以列出如下的方程：
 $$
-v1=-2+0.5*v2+0.5*v6\\
-v2=-2+0.8*v3\\
-v3=-2+0.6*v4+0.4*v5\\
-v4=10\\
-v5=1+0.2*v1+0.4*v2+0.4*v3\\
-v6=-1+0.1*v1+0.9*v6
+\begin{align}
+v1&=-2+\gamma(0.5*v2+0.5*v6)\\
+v2&=-2+\gamma(0.8*v3+0.2*v7)\\
+v3&=-2+\gamma(0.6*v4+0.4*v5)\\
+v4&=10+\gamma(1.0*v7)\\
+v5&=1+\gamma(0.2*v1+0.4*v2+0.4*v3)\\
+v6&=-1+\gamma(0.1*v1+0.9*v6)\\
+v7&=0
+\end{align}
 $$
 
+写成矩阵的形式为：
+$$
+\left[\begin{matrix}
+v1\\v2\\v3\\v4\\v5\\v6\\v7
+\end{matrix}\right]=
+\left[\begin{matrix}
+-2\\-2\\-2\\10\\1\\1\\0
+\end{matrix}\right]+\gamma
+\left[\begin{matrix}
+&0.5&&&&0.5&\\
+&&0.8&&&&0.2\\
+&&&0.6&0.4&&\\
+&&&&&&1.0\\
+0.2&0.4&0.4&&&&\\
+0.1&&&&&0.9&\\
+&&&&&&
+\end{matrix}\right]
+\left[\begin{matrix}
+v1\\v2\\v3\\v4\\v5\\v6\\v7
+\end{matrix}\right]
+$$
+即：
+$$
+\mathcal{v}=\mathcal{R}+\gamma\mathcal{P}\mathcal{v}
+$$
+对于小规模MDP问题，可以直接矩阵求解：
+$$
+\mathcal{v}=(1-\gamma\mathcal{P})^{-1}\mathcal{R}
+$$
+结果如下图所示：
 
+![student-mdp-status-value](../images/rl/student-mdp-status-value.png)
