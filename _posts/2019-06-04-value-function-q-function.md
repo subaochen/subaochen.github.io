@@ -20,7 +20,7 @@ $$
 G_t = R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\ldots=\sum_{k=0}^{\infty}\gamma^{k}R_{t+k+1}
 $$
 
-其中，$$\gamma$$为[0,1]的衰减因子，表示对长期reward的权重。
+其中，$$\gamma\in [0,1]$$的衰减因子，表示对长期reward的权重。
 
 $$G_t$$可以表示为迭代的形式（递推公式）：
 
@@ -192,3 +192,19 @@ $$
 结果如下图所示：
 
 ![student-mdp-status-value](/images/rl/student-mdp-status-value.png)
+
+附：求解以上线性方程组的octave文件
+
+```matlab
+gamma=1.0 # gamma
+R=[-2;-2;-2;10;1;-1;0] # immediately reward
+P=[0 0.5 0 0 0 0.5 0; # status transition matrix
+0 0 0.8 0 0 0 0.2;
+0 0 0 0.6 0.4 0 0;
+0 0 0 0 0 0 1.0;
+0.2 0.4 0.4 0 0 0 0;
+0.1 0 0 0 0 0.9 0;
+0 0 0 0 0 0 0]
+V=inv(eye(7)-gamma*P)*R # status value
+```
+
