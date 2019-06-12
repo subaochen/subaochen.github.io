@@ -60,7 +60,7 @@ $$
 
 因此，$$v_{\pi}(s)$$中的k表示计算第几层的return加权平均（通过student mdp的例子说明计算过程）
 
-$$q_{\pi}(s,,a)$$表达了状态s在策略$$\pi$$下，采取动作a的好坏（**动作价值函数**）：
+$$q_{\pi}(s,a)$$表达了状态s在策略$$\pi$$下，采取动作a的好坏（**动作价值函数**）：
 
 $$
 q_{\pi}(s,a)=\mathbb{E_{\pi}}[G_t\mid S_t=s,A_t=a]=\mathbb{E_{\pi}}\left[\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}|S_t=s,A_t=a\right]
