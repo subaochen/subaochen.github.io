@@ -24,21 +24,17 @@ $$
 
 即，策略$$\pi_{*}$$使得在状态s下采取动作a时其动作价值函数取最大值。
 
-问题：怎么从：
-
 $$
 \begin{align}
 q_{*}(a,s)
 &=\max_{\pi}q_\pi(s,a)\\
 &=\max_\pi\mathbb{E_\pi}[R_{t+1}+\gamma G_{t+1}\mid S_t=s,A_t=a]\\
+&=\mathbb{E_{\pi}}[R_{t+1}+\gamma G_{t+1}\mid S_t=t,A_t=a]\\
+&=\mathbb{E}[R_{t+1}+\gamma v_{*}(S_{t+1})\mid S_t=t,A_t=a]
 \end{align}
 $$
 
-到
 
-$$
-q_{*}(a,s)=\mathbb{E}[R_{t+1}+\gamma v_{*}(S_{t+1})\mid S_t=s,A_t=a]
-$$
 
 那么，哪一条路径是最优的路径呢？无论是$$v(s)$$还是$$q(a,s)$$都是指特定节点的价值，那么如何根据节点的价值，计算出采取怎样的策略，获得最优的路径呢？这个问题可以表述为：
 $$
