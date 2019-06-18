@@ -51,7 +51,7 @@ $$
 * 每移动一步的即时奖励为-1；显然，在终止状态的奖励为0。
 * 如果动作导致agent超出了边界，则agent回到移动前的状态；
 
-下面，我们评估一下随机游走的策略，即agent在一个状态下采取4种动作的概率均为0.25。首先，初始化所有的状态值函数为0，如下图所示：
+下面，我们评估一下随机游走的策略，即agent在一个状态下采取4种动作的概率均为0.25。首先，初始化所有的状态值函数为0（k=0），如下图所示：
 
 ![grid-world-0.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-0.png>)
 
@@ -73,7 +73,7 @@ $$
 
 其中，-1是采取动作up的即时奖励；1是采取动作up时后续状态的转移概率。因为采取动作up后只有一个后续状态（超出边界回到状态1），因此转移概率为1；0是上一轮迭代时后续状态（这里依然是状态1）的值价值函数。
 
-下面是计算1号状态价值函数在第一轮迭代的完整过程：
+下面是计算1号状态价值函数在第一轮迭代（k=1）的完整过程：
 
 $$
 \begin{align}
@@ -85,7 +85,7 @@ v_1(1)=& 0.25\times(-1+1\times 0)+\tag{4-1,up}\\
 \end{align}
 $$
 
-很容易看出，在第一轮迭代结束时，除终止状态外，其他所有状态的价值函数均为-1，如下图所示：
+很容易看出，在第一轮迭代结束时，除终止状态外，其他所有状态的价值函数均为-1，如下图所示（k=1）：
 
 ![grid-world-1.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-1.png>)
 
@@ -101,21 +101,21 @@ v_2(1)=& 0.25\times(-1+1\times -1)+ \tag{4-1,up} \\
 \end{align}
 $$
 
-第二轮迭代结束时，状态如下图所示：
+第二轮迭代结束时，状态如下图所示（k=2）：
 
-![grid-world-2.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-2.png>)
+![grid-world-2.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-3.png>)
 
 可以看出，离终止状态较近的状态其值函数更大一些，表示从这些状态到终止状态所需的步数更少。
 
-后面轮次的计算过程不再赘述，下面分别是第三轮迭代后的状态：
+后面轮次的计算过程不再赘述，下面分别是第三轮迭代后的状态（k=3）：
 
-![grid-world-3.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-3.png>)
+![grid-world-3.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-4.png>)
 
-第十轮迭代后的状态：
+第十轮迭代后的状态（k=10）：
 
 ![grid-world-11.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-11.png>)
 
-当$$k=\infin$$时，状态为：
+当$$k=\infty$$时，状态为：
 
 ![grid-world-infinity.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-infinity.png>)
 
