@@ -14,7 +14,7 @@ comments: true
 
 # 策略评估的概念
 
-策略评估（policy evaluation）是动态规划（dynamic programming）的一个基础性问题，即如何评估给定的策略$$\pi$$？我们已经知道最优策略（optimal policy）的定义为如果一个策略$$\pi$$使得$$v_{\pi}(s)\ge v_{{\pi}^{'}}(s),\forall s\in\mathcal{S}$$，则称策略$$\pi$$优于策略$${\pi}^{'}$$。因此，在策略评估中，如何求出$$v_{\pi}(s)$$就非常关键。
+策略评估（policy evaluation）是动态规划（dynamic programming）的一个基础性问题，即如何评估给定的策略$$\pi$$？我们已经知道最优策略（optimal policy）的定义为如果一个策略$$\pi$$使得$$v_{\pi}(s)\ge v_{\pi^{'}}(s),\forall s\in\mathcal{S}$$，则称策略$$\pi$$优于策略$$\pi^{'}$$。因此，在策略评估中，如何求出$$v_{\pi}(s)$$就非常关键。
 
 根据MDP值函数的贝尔曼公式，我们可以精确求解$$v_{\pi}(s)$$：
 
@@ -60,16 +60,21 @@ $$
 ![grid-world-status-1-step-1-0.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-status-1-step-1.png>)
 
 由此可以计算出1号状态的价值函数为：
+
 $$
 v_1(1)=0.25\times q(up,1)+0.25\times q(down,1)+0.25\times q(left,1)0.25\times q(right,1)
 $$
+
 式中，$$q(up,1)$$表示在状态1采取动作up的动作价值函数。以计算$$q(up,1)$$为例：
+
 $$
 q(up,1)=-1+1\times 0=-1
 $$
+
 其中，-1是采取动作up的即时奖励；1是采取动作up时后续状态的转移概率。因为采取动作up后只有一个后续状态（超出边界回到状态1），因此转移概率为1；0是上一轮迭代时后续状态（这里依然是状态1）的值价值函数。
 
 下面是计算1号状态价值函数在第一轮迭代的完整过程：
+
 $$
 \begin{align}
 v_1(1)=& 0.25\times(-1+1\times 0)+\tag{4-1,up}\\
@@ -85,6 +90,7 @@ $$
 ![grid-world-1.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-1.png>)
 
 下面进行第二轮迭代，还是以状态1为例：
+
 $$
 \begin{align}
 v_2(1)=& 0.25\times(-1+1\times -1)+ \tag{4-1,up} \\ 
@@ -94,6 +100,7 @@ v_2(1)=& 0.25\times(-1+1\times -1)+ \tag{4-1,up} \\
 =1.75
 \end{align}
 $$
+
 第二轮迭代结束时，状态如下图所示：
 
 ![grid-world-2.png](<https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/grid-world-2.png>)
