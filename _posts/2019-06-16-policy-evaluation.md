@@ -1,3 +1,17 @@
+---
+title: DP学习笔记-策略评估
+type: post
+categories:
+- deeplearning
+layout: post
+date: 2019-06-16
+tags: [deeplearning,dynamic programming,reinforcement learning]
+status: publish
+published: true
+use_math: true
+comments: true
+---
+
 # 策略评估的概念
 
 策略评估（policy evaluation）是动态规划（dynamic programming）的一个基础性问题，即如何评估给定的策略$$\pi$$？我们已经知道最优策略（optimal policy）的定义为如果一个策略$$\pi$$使得$$v_{\pi}(s)\ge v_{{\pi}^{'}}(s),\forall s\in\mathcal{S}$$，则称策略$$\pi$$优于策略$${\pi}^{'}$$。因此，在策略评估中，如何求出$$v_{\pi}(s)$$就非常关键。
