@@ -53,6 +53,7 @@ q_{\pi}(s,\pi^{'}(s))\ge v_{\pi}(s)\tag{0}
 $$
 
 下面逐步展开$$q_{\pi}(s,\pi^{'}(s))$$即可证明在greedy策略下，$$v_{\pi^{'}}\ge v_{\pi}(s)$$：
+
 $$
 \begin{align}
 v_{\pi}(s)&\le q_{\pi}(s,\pi^{'}(s))\\
@@ -101,6 +102,7 @@ $$
 ![](https://github.com/subaochen/subaochen.github.io/raw/master/images/rl/dp/grid-world-pi-0.png)
 
 第一轮迭代，首先计算状态价值函数，如下图左列所示。在此基础上，可以计算各个状态的动作价值函数如下：
+
 $$
 \begin{align}
 q(1,left)&=-1+1\times0=-1\\
@@ -111,11 +113,13 @@ q(2,left)&=-1+1\times-1=-2\\
 \ldots
 \end{align}
 $$
+
 因此，根据greedy policy的原则，状态1的最佳动作应该是left，以此类推，greedy policy作用下的动作分布图如下所示。
 
 ![](https://github.com/subaochen/subaochen.github.io/raw/master/images/rl/dp/grid-world-pi-1.png)
 
 第二轮迭代，首先根据第二轮产生的动作分布图计算状态价值函数：
+
 $$
 \begin{align}
 v(1)&=1\times(-1+1\times0)=-1\\
@@ -125,7 +129,9 @@ v(4)&=\ldots=-1\\
 \ldots
 \end{align}\\
 $$
+
 然后根据状态价值函数可以计算出每个$$q(s,a)$$（以状态2、5为例，状态1,4,11,14无需重复计算）：
+
 $$
 \begin{align}
 q(2,left)&=-1+1\times-1=-2\\
@@ -138,6 +144,7 @@ q(5,up)&=-1+1\times-1=-2\\
 q(5,down)&=-1+1\times-1=-3\\
 \end{align}
 $$
+
 因此状态2在greedy policy下的最佳动作方向为left，状态5在greedy policy下的最佳动作为{left,up}，其他状态的最佳动作方向以此类推可以算出，如下图所示：
 
 ![](https://github.com/subaochen/subaochen.github.io/raw/master/images/rl/dp/grid-world-pi-2.png)
