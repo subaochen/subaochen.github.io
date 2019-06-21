@@ -82,7 +82,7 @@ $$
 
 # policy improvement的案例解析
 
-还是以小小方格世界（grid world，参见：[DP学习笔记-策略评估](https://subaochen.github.io/deeplearning/2019/06/16/policy-evaluation/)）为例子，通过greedy policy来看一下是什么情况。
+还是以小小方格世界（grid world，参见：[DP学习笔记-策略评估](https://subaochen.github.io/deeplearning/2019/06/16/policy-evaluation/)）为例子，通过greedy policy来看一下是什么情况。（下面的计算过程实际上是value iteration，不是policy iteration。）
 
 首先，初始化方格世界，采取uniform random policy，初始化所有状态的价值函数为0，如下图最左边列所示。此时，计算所有单元格的动作价值函数$$q(s,a)=\sum p(r,s'\mid s,a)(r+\gamma v(s'))$$：
 
