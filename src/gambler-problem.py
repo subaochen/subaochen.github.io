@@ -54,8 +54,17 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
             delta = max(delta, np.abs(best_action_value - V[s]))
             # Update the value function. Ref: Sutton book eq. 4.10.
             V[s] = best_action_value
+
+        # 画出每次迭代的状态价值函数曲线，观察状态价值函数的变化趋势
+        plt.plot(range(100), V[:100])
+
         # Check if we can stop
         if delta < theta:
+            plt.xlabel('Capital')
+            plt.ylabel('Value Estimates')
+            plt.title('Final Policy(action stakes) vs. State(Capital),p_h=' + str(p_h))
+            plt.show()
+
             break
 
     # Create a deterministic policy using the optimal value function
@@ -91,7 +100,7 @@ def draw_policy(p_h):
 
 
 if __name__ == '__main__':
-    for p_h in (0.1, 0.2,0.5, 0.6):
+    for p_h in (0.35,):
         policy, v = value_iteration_for_gamblers(p_h)
 
         print("Optimized Policy:")
@@ -102,5 +111,5 @@ if __name__ == '__main__':
         print(v)
         print("")
 
-        draw_value_estimates(p_h)
+        # draw_value_estimates(p_h)
         draw_policy(p_h)
