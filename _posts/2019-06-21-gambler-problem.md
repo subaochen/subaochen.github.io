@@ -26,13 +26,13 @@ comments: true
 主要参考了：https://github.com/dennybritz/reinforcement-learning 。代码的编写是直线型的（不是面向对象），因此还是比较容易理解的。其中主要的是两点：
 
 * 值迭代的过程：首先使用贪心算法计算每个状态的价值函数，直到价值函数收敛，然后再**一次性**计算最优策略。
-* 对于sutton book中公式4.10的理解很重要：基于贪心算法，当前状态的价值函数是其对应的最大的动作价值函数，再次列出如下：
+* 对于sutton book中公式4.10的理解很重要：基于贪心算法，当前状态的价值函数是其对应的最大的动作价值函数（以当前赌资为98元为例），再次列出如下：
 
 $$
 v_{k+1}(s)=\max_a\sum_{s',r}p(s',r\mid s,a)[r+\gamma v_k(s')]
 $$
 
-
+![](https://github.com/subaochen/subaochen.github.io/raw/master/images/rl/dp/gambler-problem-98.png)
 
 
 ```Python

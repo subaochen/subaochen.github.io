@@ -31,7 +31,8 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
             Its length equals to the number of actions.
         """
         A = np.zeros(101)
-        stakes = range(1, min(s, 100 - s) + 1)  # Your minimum bet is 1, maximum bet is min(s, 100-s).
+        # Your minimum bet is 1, maximum bet is min(s, 100-s).
+        stakes = range(1, min(s, 100 - s) + 1)
         for a in stakes:
             # R[s+a], R[s-a] are immediate rewards.
             # V[s+a], V[s-a] are values of the next states.
@@ -41,7 +42,7 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
                     R[s - a] + V[s - a] * gamma)
         return A
 
-    # 第几次重新设置状态价值函数？`
+    # 第几次重新设置状态价值函数？
     sweep = 0
     while True:
         print("=============sweep=" + str(sweep) + "==============")
@@ -53,14 +54,13 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
             A = one_step_lookahead(s, V, R)
             # print(s,A,V) if you want to debug.
             # 大量的调试输出
-            print("s=")
-            print(s)
-            print("A=")
-            print(A)
-            print("V=")
-            print(V)
-            print("R=")
-            print(R)
+            # print("s=" + str(s))
+            # print("A=")
+            # print(A)
+            # print("V=")
+            # print(V)
+            # print("R=")
+            # print(R)
             best_action_value = np.max(A)
             # Calculate delta across all states seen so far
             delta = max(delta, np.abs(best_action_value - V[s]))
@@ -68,6 +68,8 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
             V[s] = best_action_value
 
         sweep = sweep + 1
+        print(f"sweep={sweep},V=")
+        print(V)
 
         # 画出每次迭代的状态价值函数曲线，观察状态价值函数的变化趋势
         plt.plot(range(100), V[:100])
@@ -77,7 +79,7 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
             plt.xlabel('Capital')
             plt.ylabel('Value Estimates')
             plt.title('Final Policy(action stakes) vs. State(Capital),p_h=' + str(p_h))
-            plt.show()
+            # plt.show()
 
             break
 
@@ -86,11 +88,26 @@ def value_iteration_for_gamblers(p_h, theta=0.0001, gamma=1.0):
     for s in range(1, 100):
         # One step lookahead to find the best action for this state
         A = one_step_lookahead(s, V, R)
+        # print("caculate policy,s={:2d},A=".format(s))
+        # print(A)
+        # how many best actions? and what are they?
         best_action = np.argmax(A)
+        # print_best_actions(s, A)
         # Always take the best action
         policy[s] = best_action
 
     return policy, V
+
+
+def print_best_actions(s, A):
+    counter = 0
+    maxItem = max(A)
+    index = np.argmax(A)
+    for a in A:
+        if a == maxItem:
+            print("s=" + str(s) + ", best action=" + str(a))
+            counter = counter + 1
+    print(f"s={s},counter={counter},stake={index}")
 
 
 def draw_value_estimates(p_h):
@@ -107,15 +124,27 @@ def draw_policy(p_h):
     x = range(100)
     y = policy
     plt.bar(x, y, align='center', alpha=0.5)
+    # plt.plot(x, y)
     plt.xlabel('Capital')
     plt.ylabel('Final policy (stake)')
     plt.title('Capital vs Final Policy(ph=' + str(p_h) + ')')
     plt.show()
 
+def draw_multi_policy(policies):
+    i = 1
+    for policy in policies:
+        ax = plt.subplot(330+i)
+        plt.plot(range(0,100),policy)
+        plt.title(f'P(win)={i/10}',pad=-20,loc='left')
+        i+=1
+    plt.show()
+
 
 if __name__ == '__main__':
-    for p_h in (0.4, ):
+    policies = []
+    for p_h in np.arange(0.1,1,0.1):
         policy, v = value_iteration_for_gamblers(p_h)
+        policies.append(policy)
 
         print("Optimized Policy(p_h=" + str(p_h) + "):")
         print(policy)
@@ -126,4 +155,5 @@ if __name__ == '__main__':
         print("")
 
         # draw_value_estimates(p_h)
-        draw_policy(p_h)
+        # draw_policy(p_h)
+    draw_multi_policy(policies)
