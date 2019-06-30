@@ -6,6 +6,10 @@ comments: true
 author_footer: false
 ---
 
+## 教程和视频
+* [Reinforcement Learning, An Introduction](http://www.incompleteideas.net/book/the-book.html)
+* [David Silver强化学习视频](https://www.bilibili.com/video/av45357759)
+
 ## 组织和人物
 * [RLAI Lab](https://rlai-lab.github.io)，Rich sutton领导下的实验室。
 * [Ray](https://oneraynyday.github.io/)
