@@ -15,10 +15,13 @@ author_footer: false
 * [Ray](https://oneraynyday.github.io/)
 
 
-## 示例代码
-* [Denny Britz](https://github.com/dennybritz/reinforcement-learning)
+## 代码
+* [Denny Britz针对sutton书的实现](https://github.com/dennybritz/reinforcement-learning)
 * [ShangtongZhang](https://github.com/ShangtongZhang/reinforcement-learning-an-introduction)
 * [RLEngine](https://github.com/OneRaynyDay/RLEngine)
+* [deepmind TRFL](https://github.com/deepmind/trfl)
+* [TensorFlow implementation of Deep Reinforcement Learning papers](https://github.com/carpedm20/deep-rl-tensorflow)
 
 
 ## 论文
+
