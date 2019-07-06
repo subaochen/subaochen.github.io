@@ -8,7 +8,7 @@ author_footer: false
 
 ## 个人信息
 
-> 宿宝臣，山东淄博
+> 宿宝臣
 
 > Email: subaochen#126.com
 
