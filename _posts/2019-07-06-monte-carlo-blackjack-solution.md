@@ -8,7 +8,7 @@ date: 2019-07-06
 tags: [deep learning,reinformcement learning, monte carlo, blackjack]
 status: publish
 published: true
-use_math: false
+use_math: true
 comments: true
 ---
 
