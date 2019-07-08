@@ -5,7 +5,7 @@ categories:
 - deeplearning
 layout: post
 date: 2019-06-29
-tags: [deeplearning,model-free,reinforcement learning]
+tags: [monte carlo,deeplearning,model-free,reinforcement learning]
 status: publish
 published: true
 use_math: true
