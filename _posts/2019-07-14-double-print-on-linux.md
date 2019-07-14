@@ -23,4 +23,4 @@ comments: true
 
 3. 打印偶数页，打印机选项如下图所示，注意除了选择even pages之外，还要选择**“反向”**！
 
-   ![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/office/double-print-even.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/office/double-print-even.png)
