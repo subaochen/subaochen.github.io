@@ -1,5 +1,5 @@
 ---
-title:python的yield用法
+title: python的yield用法
 type: post
 categories:
 - python
