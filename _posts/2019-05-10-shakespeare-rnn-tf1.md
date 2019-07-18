@@ -5,7 +5,7 @@ categories:
 - deeplearning
 layout: post
 date: 2019-05-10
-tags: [深度学习, RNN]
+tags: [deep learning, RNN]
 status: publish
 published: true
 comments: true
@@ -15,7 +15,7 @@ comments: true
 这是学习tensorflow官网资料：https://tensorflow.google.cn/tutorials/sequences/text_generation 的笔记，通过RNN喂入莎士比亚的戏剧文本，尝试让电脑自己写出莎士比亚风格的文章。运行这个简单的例子需要强大的GPU，在我的笔记本上（MX 150只有2G显存）无法运行，如果只使用CPU需要较长的时间，需要有心理准备。可以在google colab上面运行测试，速度10x以上的提升。
 
 这是一个many to many的示例（下图中倒数第二个）。实际上，RNN可能有下图所示的几种模式(参见：http://karpathy.github.io/2015/05/21/rnn-effectiveness/)：
-![diags](images/diags.jpeg)
+![diags](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/diags.jpeg)
 
 @TODO
 
@@ -91,7 +91,7 @@ print(text[:250])
     
     First Citizen:
     First, you know Caius Marcius is chief enemy to the people.
-    
+
 
 
 ## 文本向量化
@@ -730,8 +730,9 @@ print(generate_text(model, start_string=u"First:"))
     yet
     O'er--not as once woman: we would cleave with took pleasure
     That as I would bear haintainst it again.
-    
-    
+
+
+​    
 
 
 # 后记
