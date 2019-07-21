@@ -12,7 +12,7 @@ use_math: true
 comments: true
 ---
 
-多臂老虎机（multi-armed bandit）问题是一个经典的强化学习入门问题。
+多臂老虎机（multi-armed bandits）问题是一个经典的强化学习入门问题。
 
 # 多臂老虎机问题
 
