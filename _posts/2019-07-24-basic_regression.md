@@ -10,6 +10,7 @@ status: publish
 published: true
 comments: true
 ---
+
 这是Tensorflow对于回归问题（regression problem）的官方教程，个人感觉代码写的干净漂亮，不仅仅可以学到回归问题的解决方法，也可以学到诸如数据准备、结果展示等技术，因此详细的剖析了这个教程，加上了我个人认为需要补充的资料背景。
 
 本教程通过[Auto MPG](https://archive.ics.uci.edu/ml/datasets/auto+mpg)这个数据集构建了一个模型来预测70年代晚期和80年代早期的汽车燃油经济性，即通常所说的百公里油耗（MPG的本意是Miles Per Gallon）。关于这个数据集的内容，在下面的分析中会给出其结构。
@@ -49,17 +50,26 @@ Auto MPG数据集是[UCI Machine Learning Repository](https://archive.ics.uci.ed
 8. origin: 原产地
 9. car name: 车型名称
 
+
+
 ## 下载数据集
 keras提供了几种下载数据的方式，一种是直接使用keras中已经包含了的数据集，比如mnist数据集。一种是如下的方式下载数据：
+
 
 ```python
 dataset_path = keras.utils.get_file("auto-mpg.data", "http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data")
 dataset_path
 ```
 
+
+
+
     '/home/subaochen/.keras/datasets/auto-mpg.data'
 
+
+
 使用pandas处理Auto MPG数据集。Auto MPG本质上是csv格式的，因此pandas可以直接打开。由于"car name"这一列和MPG并没有关系，因此在实际读取数据集的时候通过column_names限定了用到的数据列。
+
 
 ```python
 column_names = ['MPG','Cylinders','Displacement','Horsepower','Weight',
@@ -72,11 +82,23 @@ dataset = raw_dataset.copy()
 dataset.tail()
 ```
 
+
+
+
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+    
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -151,13 +173,20 @@ dataset.tail()
 </table>
 </div>
 
+
+
 ## 清理数据（缺失值）
 
 这个数据集中有几条没有数据的记录，需要清理掉。通常，新拿到一个数据集，都需要检测数据集是否存在无效记录。
 
+
 ```python
 dataset.isna().sum()
 ```
+
+
+
+
     MPG             0
     Cylinders       0
     Displacement    0
@@ -168,7 +197,10 @@ dataset.isna().sum()
     Origin          0
     dtype: int64
 
+
+
 使用dropna从数据集中删除无效记录。
+
 
 ```python
 dataset = dataset.dropna()
@@ -178,9 +210,11 @@ dataset = dataset.dropna()
 
 这里处理`Origin`字段的方法值得注意：`pop`弹出这一列，然后根据`pop`字段的值重新增加三个列。
 
+
 ```python
 origin = dataset.pop('Origin')
 ```
+
 
 ```python
 dataset['USA'] = (origin == 1)*1.0
@@ -188,6 +222,24 @@ dataset['Europe'] = (origin == 2)*1.0
 dataset['Japan'] = (origin == 3)*1.0
 dataset.tail()
 ```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+    
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -274,6 +326,8 @@ dataset.tail()
 </table>
 </div>
 
+
+
 ## 切分训练数据集和测试数据集
 
 这里切分数据集的方法很巧妙，使用了`DataFrame`的`sample`方法，一次性完成了随机选取，也避免了`shuffle`操作，至少是简洁的做法，是否高效未可知。
@@ -286,6 +340,7 @@ dataset.tail()
 from sklearn.model_selection import train_test_split
 train_dataset, test_dataset = train_test_split(dataset, train_size=0.8, test_size=0.2, shuffle=True)
 ```
+
 
 ```python
 train_dataset = dataset.sample(frac=0.8,random_state=0)
@@ -300,14 +355,18 @@ seaborn的pairplot提供了图形化的方式快速查看数据集，更高效�
 * 从第一行第二列可以看出，气缸数越多，燃油经济型越低。
 * 同样的，排气量大的车子，燃油经济性也越差。
 
+
 ```python
 sns.pairplot(train_dataset[["MPG", "Cylinders", "Displacement", "Weight"]], diag_kind="kde")
 plt.show()
 ```
 
+
 ![png](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/tensorflow/basic-regression/output_17_0.png)
 
+
 看一下训练集的统计数据，这个统计数据在后面进行数据的标准化的时候会用到。
+
 
 ```python
 train_stats = train_dataset.describe()
@@ -316,6 +375,24 @@ train_stats.pop("MPG")
 train_stats = train_stats.transpose()
 train_stats
 ```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+    
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -434,9 +511,12 @@ train_stats
 </table>
 </div>
 
+
+
 ## 获得标签数据集
 
 标签（label）是训练模型的“指导”或者“准星”，根据label训练模型的目的就是在预测时，能够尽量逼近label。这里直接将train_dataset/test_dataset中的MPG列pop出来即可。
+
 
 ```python
 train_labels = train_dataset.pop('MPG')
@@ -557,6 +637,9 @@ example_result = model.predict(example_batch)
 example_result
 ```
 
+
+
+
     array([[ 0.33291826],
            [ 0.20068091],
            [-0.2432324 ],
@@ -567,6 +650,8 @@ example_result
            [ 0.38458073],
            [ 0.04117467],
            [ 0.15005343]], dtype=float32)
+
+
 
 ## 训练模型
 
@@ -610,6 +695,9 @@ hist = pd.DataFrame(history.history)
 hist['epoch'] = history.epoch
 hist.tail()
 ```
+
+
+
 
 <div>
 <style scoped>
@@ -692,6 +780,9 @@ hist.tail()
   </tbody>
 </table>
 </div>
+
+
+
 
 ```python
 def plot_history(history):
@@ -835,9 +926,16 @@ plt.ylabel("Count")
 plt.show()
 ```
 
+
 ![png](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/tensorflow/basic-regression/output_47_0.png)
 
+
 理想情况下，误差应该符合正态分布，这里看起来不太正态，和样本的数量少有一定关系。
+
+
+```python
+
+```
 
 # 结论
 
