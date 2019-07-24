@@ -848,3 +848,6 @@ plt.show()
 * 当输入数据的范围相差比较大时，需要对数据进行标准化处理。
 * 当训练数据比较少时，相应的网络层次和节点数要减少，以避免过拟合。
 * 早停（EarlyStopping）技术可以有效的阻止过拟合。
+
+完整的jupyter notebook下载：[basic regression](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/resources/basic_regression.ipynb)
+
