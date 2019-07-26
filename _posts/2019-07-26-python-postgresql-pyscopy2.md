@@ -222,8 +222,9 @@ finally:
 
 更详细的内容可参考：
 
-* (http://zetcode.com/python/psycopg2/)[http://zetcode.com/python/psycopg2/]，大部分代码来自这里。
-* (https://github.com/psycopg/psycopg2)[https://github.com/psycopg/psycopg2] 的doc部分
-* (http://www.postgresqltutorial.com/postgresql-python)[http://www.postgresqltutorial.com/postgresql-python/]
-* (https://wiki.postgresql.org/wiki/Psycopg2_Tutorial)[https://wiki.postgresql.org/wiki/Psycopg2_Tutorial]
+* [http://zetcode.com/python/psycopg2/](http://zetcode.com/python/psycopg2/)，大部分代码来自这里。
+
+* [https://github.com/psycopg/psycopg2](https://github.com/psycopg/psycopg2) 的doc部分
+* [http://www.postgresqltutorial.com/postgresql-python](http://www.postgresqltutorial.com/postgresql-python/)
+* [https://wiki.postgresql.org/wiki/Psycopg2_Tutorial](https://wiki.postgresql.org/wiki/Psycopg2_Tutorial)
 
