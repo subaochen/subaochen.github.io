@@ -5,7 +5,7 @@ categories:
 - deeplearning
 layout: post
 date: 2019-07-20
-tags: [deep learning,reinformcement learning, bandit problem]
+tags: [deep learning,reinforcement learning, bandit problem]
 status: publish
 published: true
 use_math: true
