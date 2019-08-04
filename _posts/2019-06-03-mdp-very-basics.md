@@ -19,54 +19,40 @@ comments: true
 
 强化学习中的MDP是Agent和Environment交互的过程，如下图所示：
 
-![agent-envrionment](/images/rl/agent-envrionment.png)
+![agent-envrionment](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/agent-envrionment.png)
 
 假设Agent的初始状态为$$S_0$$，Agent根据自身的策略（随机或者某种特定的策略）采取了动作$$A_0$$，Envrionment根据此动作给出了Agent的下一状态$$S_1$$和相应的Reward：$$R_1$$，Agent再根据$$S_1$$决定采取动作$$A_1$$，于是形成了如下的序列：
 
 $$
-S_0,A_0,S_1,R_1,A_1,S_2,R_2,A_2,...
+S_0,A_0,R_1,S_1,A_1,R_2,S_2,A_2,...
 $$
 
-如果假设$$R_0 = 0$$的话，则序列为：
-
-$$
-S_0,R_0,A_0,S_1,R_1,A_1,S_2,R_2,A_2,...
-$$
-
-也就是说，<S,R,A>三元组构成了MDP的主要过程。
+也就是说，<S,A,R>三元组构成了MDP的主要过程。
 
 # dynamics funtion
-如果我们把Agent和Environment分别看做黑盒，那么表达强化学习的交互过程至少应该包含下面的两个概率：
-
-* 表示Agent的概率，$$p(a\mid s',r)$$，即Agent接收到状态s'和r后输出动作a的概率；但事实上，Agent是一个白盒，我们通常是根据特定的策略$$\pi$$来决定动作a，因此这个概率非常罕见。
-* 表示Environment的概率，$$p(s',r\mid a)$$，即Environment接收到动作a后输出状态s'和r的概率；
-
-其中，a,s',r分别是随机变量$$A_t,S_t,R_t$$在时刻t的特定取值。在给定状态空间S和动作空间A的情况下，如果我们能够计算出所有的Agent概率和Environment的概率，则整个MDP的解空间是可以计算出来的。
-
-也许为了统一化处理，作者定义了**dynamics function**来计算MDP的解空间（或许这是随机过程的一个概念？）：
-
+**dynamics function**是MDP问题的一个基础函数：
 $$
-p(s',r\mid a,s)=P_r(S_t=s',R_t=r \mid A_{t-1}=a, S_{t-1}=s)
+p(s',r\mid s,a)=P_r(S_t=s',R_t=r \mid A_{t-1}=a, S_{t-1}=s)
 $$
 
-dynamics function是一个四元概率函数，是对Environment的建模，即将Agent看做一个白盒（合理的假设，因为Agent对我们而言是完全可控的），则Agent的输入s和输出a对于Environment而言可以看做是Environment的输入，因此dynamics function的意义为：给定状态s和动作a，Environment输出下一时刻的状态s'及其相应的reward r的概率。
-
-有了dynamics function，上述Environment的概率可以表示为（<font color="red">不知是否正确？</font>）：
-
+并且：
 $$
-p(s',r\mid a) = \sum_{s} p(s',r\mid s,a)
+\sum_{s'\in \mathcal{S}}\sum_{r\in \mathcal{R}} p(s',r\mid s,a)=1, \forall s\in\mathcal{S},\forall a\in\mathcal{A}(s)
 $$
 
-在MDP中，状态转移矩阵是一个重要的概念。有了dynamics function，状态转移矩阵可以表示为（传统的状态转移矩阵为$$p_{s's}$$，这里加入了a）：
+
+dynamics function是一个四元概率函数，是**对Environment的建模**，即将Agent看做一个白盒（合理的假设，因为Agent对我们而言是完全可控的），则Agent的输入s和输出a对于Environment而言可以看做是Environment的输入，因此dynamics function的意义为：给定状态s和动作a，Environment输出下一时刻的状态s'及其相应的reward r的概率。
+
+在MDP中，状态转移矩阵是一个重要的概念。有了dynamics function，状态转移矩阵可以表示为（传统的状态转移矩阵为$$\mathcal{p}_{s's}$$，这里加入了a）：
 
 $$
-p(s'\mid s,a) = \sum_{r} p(s',r\mid s,a)
+p(s'\mid s,a) = \sum_{r\in\mathcal{R}} p(s',r\mid s,a)
 $$
 
 对于reward的期望，即给定a，s时随机变量$$R_t$$的期望表示为：
 
 $$
-r(s,a)=\mathbb{E}[R_t\mid S_{t-1}=s, A_{t-1}=a]=\sum_{r}r\sum_{s}p(s',r\mid s,a)
+r(s,a)=\mathbb{E}[R_t\mid S_{t-1}=s, A_{t-1}=a]=\sum_{r\in\mathcal{R}}r\sum_{s'\in\mathcal{S}}p(s',r\mid s,a)
 $$
 
 $$r(s,a,s')$$则是一个表示即时奖励的标量函数，即Agent根据当前状态s做出动作a之后，环境在反馈一个s'的同时，也会反馈一个相应的reward。
@@ -97,7 +83,7 @@ $$
 
 假设电池电量高时research完成后电量仍然高的概率为$$\alpha$$，电池电量低时research动作完成后电量依然低的概率为$$\beta$$，于是本案例可表示为下图，其中无背景圆圈表示机器人的电池电量状态空间，黑色圆点表示机器人的动作空间。弧线上标注的是动作的概率及其reward值。可以看出，每一个动作的总的概率和为1。这是一个Agent视角的状态图。
 
-![mdp-collect-cans-case](/images/rl/mdp-collect-cans-case.png)
+![mdp-collect-cans-case](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/mdp-collect-cans-case.png)
 
 通过概率转移矩阵的方式描述本案例：
 
