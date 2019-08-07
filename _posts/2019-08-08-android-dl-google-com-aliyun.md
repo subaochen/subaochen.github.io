@@ -31,7 +31,7 @@ jcenter()
 
 注意，可能有两处需要替换，我这边替换后的build.properties文件如下：
 
-```
+```properties
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
@@ -74,4 +74,12 @@ task clean(type: Delete) {
 }
 ```
 
-另外，如果设置了代理，需要取消代理设置，尤其是要检查`$HOME/.gradle/gradle.properties`文件中是否存在代理设置，一定要记得去掉，否则访问不了aliyun的资源。
+另外，如果设置了代理，需要取消代理设置，尤其是要检查`$HOME/.gradle/gradle.properties`文件中是否存在代理设置，一定要记得去掉，否则访问不了aliyun的资源。(windows下检查C:\Users\Administrator\.gradle\gradle.properties这个文件)：
+
+```properties
+#systemProp.http.proxyHost=sdk.gdgshanghai.com
+#systemProp.https.proxyPort=8000
+#systemProp.https.proxyHost=sdk.gdgshanghai.com #systemProp.http.proxyPort=8000  
+```
+
+ 
