@@ -55,13 +55,21 @@ $$
 r(s,a)=\mathbb{E}[R_t\mid S_{t-1}=s, A_{t-1}=a]=\sum_{r\in\mathcal{R}}r\sum_{s'\in\mathcal{S}}p(s',r\mid s,a)
 $$
 
+上式也可以表示为：
+$$
+r(s,a)=\mathbb{E}[R_t\mid S_{t-1}=s, A_{t-1}=a]=\sum_{r\in\mathcal{R}}\sum_{s'\in\mathcal{S}}rp(s',r\mid s,a)
+$$
+
+
+也就是说，把r放到里面结果是一样的。但是，第一种表示方法更加直观的表达出了期望的计算方式。
+
 $$r(s,a,s')$$则是一个表示即时奖励的标量函数，即Agent根据当前状态s做出动作a之后，环境在反馈一个s'的同时，也会反馈一个相应的reward。
 
-对于三元组<s,a,s'>的reward期望，可以表示为（<font color="red">我得出的结论多了r的乘积项，不知道哪里出错了？</font>）：
+对于三元组<s,a,s'>的reward期望，可以表示为：
 $$
 r(s,a,s')=\mathbb{E}[R_t\mid S_{t-1}=t,A_{t-1}=a,S_t=s']
 \\=\sum_{r}r p(r\mid s,a,s')
-=\sum_{r}r\frac{p(r,s,a,s')}{p(s,a,s')}
+=\sum_{r}r\frac{p(r,s',s,a)}{p(s',s,a)}
 $$
 
 由条件概率的定义可得：
@@ -76,6 +84,12 @@ $$
 $$
 r(s,a,s')=\sum_{r}r\frac{p(s',r\mid s,a)}{p(s'\mid s,a)}
 $$
+
+画个图可以更直观的理解r(s,a,s')的计算方法：
+
+![sra-reward](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/mdp/sra-reward.png)
+
+从图中可以看出$$\sum\frac{p(s',r|s,a)}{p(s'|s,a)} = 1$$。
 
 # 案例分析
 
@@ -102,13 +116,12 @@ $$
 
 上表中，$$p(s'\mid s,a)=\sum_{r} p(s',r \mid s,a)$$，但是由于<s,a,s',r>是一一对应关系，因此$$p(s'\mid s,a)=p(s',r\mid s,a)$$
 
+本案例重点是要学到使用MDP进行分析的基本步骤：
 
-
-
-
-
-
-
+1. 辨识Agent和Enviroment。
+2. 辨识Agent的状态空间$$\mathcal{S}$$
+3. 根据状态空间确定Agent的动作空间$$\mathcal{A}(\mathcal{S})$$
+4. 测量状态转移函数p(s'|s,a)或者p(s',r|s,a)
 
 
 
