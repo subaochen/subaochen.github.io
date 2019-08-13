@@ -12,7 +12,14 @@ comments: true
 ---
 
 尽管[这里](https://tensorflow.google.cn/lite)有tensorflow lite的详细
-介绍，在实战中还是不免要踩一些坑。下面是我踩过的坑，记录下来，免得下次踩同样的坑。
+介绍，在实战中还是不免要踩一些坑。下面是我踩过的坑，记录下来，免得下次踩同样的坑）。
+
+测试环境：
+
+* 自己训练的模型。使用预训练的模型应该会更简单一些，不需要模型转换这个步骤。
+* Tensorflow 2.0.0-beta1
+* Android Studio 3.4.2
+* 简单的回归预测案例
 
 # 模型转换
 
@@ -37,8 +44,6 @@ train_stats = train_stats.transpose()
 # 创建csv文件，以便移动端使用相同的统计数据标准化数据
 train_stats.to_csv('train_stats.csv', index=False)
 ```
-
-
 
 # Android App的配置
 
@@ -80,7 +85,7 @@ android {
 
 有了以上的准备工作，就可以在适当的Action中使用Interpreter来运行模型了：
 
-```
+```java
 private static final String MODEL = "mymodel.tflite";
 ......
 try (Interpreter interpreter = new Interpreter(loadModelFile(MODEL))) {
@@ -88,6 +93,11 @@ try (Interpreter interpreter = new Interpreter(loadModelFile(MODEL))) {
         interpreter.run(normed_input, output);
 }
 
+    /**
+     * Memory-map the model file in Assets.
+     *
+     * @see https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/lite/java/demo/app/src/main/java/com/example/android/tflitecamerademo/ImageClassifier.java
+     */
 private MappedByteBuffer loadModelFile(String modelPath) throws IOException {
         AssetFileDescriptor fileDescriptor = getAssets().openFd(modelPath);
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
@@ -146,6 +156,4 @@ Interpreter的参数很简单，一个是input，一个output，但是要注意�
                 return normed_input;
             }
 ```
-
-
 
