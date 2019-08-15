@@ -287,6 +287,16 @@ em {
             margin-start:0;
             margin-end:0;
         }
+        img {
+            margin: 0 auto;
+            display: block;
+        }
+        /*
+        .center-image {
+            margin: 0 auto;
+            display: block;
+        }
+        */
     }
 } 
 
@@ -340,11 +350,6 @@ em {
     margin: 30px auto;
 }
 
-.center-image
-{
-    margin: 0 auto;
-    display: block;
-}
 
 @media all and (max-width: 1000px) {
     #site-title img {
