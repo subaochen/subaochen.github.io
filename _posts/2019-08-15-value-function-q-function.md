@@ -119,7 +119,23 @@ $$
 v_{\pi}(s)=\sum_{a}\pi(a\mid s)\sum_{r,s'}p(s',r\mid a,s)[r+\gamma v_{\pi}(s')]
 $$
 
-这就是著名的状态价值函数的**Bellman等式**，即迭代公式。作者在这里有一段非常精彩的论述，摘录如下：
+这就是著名的状态价值函数的**Bellman等式**，即迭代公式。
+
+从正面推导一下Bellman等式：
+$$
+\begin{align}
+v_{\pi}(s)&=\mathbb{E}_{\pi}[R_{t+1}+\gamma G_{t+1}\mid S_t=s]\\
+&=\mathbb{E}_{\pi}[R_{t+1}\mid S_t=s]+\mathbb{E}_{\pi}[\gamma G_{t+1}\mid S_t=s]\\
+&=\sum_{a}\pi(a\mid s)\sum_r r\sum_{s'}p(s',r\mid s,a)+\gamma\sum_a\pi(a\mid s)\sum_r \sum_{s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_{a}\pi(a\mid s)\sum_r \sum_{s'}rp(s',r\mid s,a)+\gamma\sum_a\pi(a\mid s)\sum_r \sum_{s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_{a}\pi(a\mid s)\sum_{r,s'}rp(s',r\mid s,a)+\gamma\sum_a\pi(a\mid s)\sum_{r,s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_a\pi(a\mid s)\sum_{r,s'}p(s',r\mid s,a)\left[r+\gamma v_{\pi}(s')\right]
+\end{align}
+$$
+
+上面的推导过程用到了Exersice 3.11的结论，参见：[关于Exercise 3.11的解析](https://subaochen.github.io/deeplearning/2019/08/14/exercise-3-11-note/)
+
+作者在这里有一段非常精彩的论述，摘录如下：
 
 > where it is implicit that the actions, $$a$$, are taken from the set $$\mathcal A(s)$$, that the next states, $$s'$$ , are taken from the set $$\mathcal{S}$$ (or from $$\mathcal{S}+$$ in the case of an episodic problem), and thatt he rewards, $$r$$, are taken from the set $$\mathcal{R}$$. Note also how in the last equation we havem erged the two sums, one over all the values of $$s'$$  and the other over all the values of $$r$$, into one sum over all the possible values of both. We use this kind of merged sum often to simplify formulas. Note how the final expression can be read easily as an expected value. It is really a sum over all values of the three variables, $$a$$, $$s'$$ , and $$r$$. For each triple, we compute its probability, $$\pi(a\mid s)p(s' , r \mid s, a)$$, weight the quantity in brackets by that probability, then sum over all possibilities to get an expected value.
 
