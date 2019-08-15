@@ -4,7 +4,7 @@ type: post
 categories:
 - deeplearning
 layout: post
-date: 2019-06-04
+date: 2019-08-15
 tags: [deeplearning,mdp,value function,reinforcement learning]
 status: publish
 published: true
