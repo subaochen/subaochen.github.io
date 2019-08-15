@@ -12,7 +12,6 @@ use_math: true
 comments: true
 
 ---
-# 回报
 
 # 奖励和回报
 
