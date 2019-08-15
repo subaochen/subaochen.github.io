@@ -340,6 +340,12 @@ em {
     margin: 30px auto;
 }
 
+.center-image
+{
+    margin: 0 auto;
+    display: block;
+}
+
 @media all and (max-width: 1000px) {
     #site-title img {
         width: 25px;
@@ -404,8 +410,3 @@ blockquote{
     font-style:italic;
 }
 
-.center-image
-{
-    margin: 0 auto;
-    display: block;
-}
