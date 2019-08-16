@@ -126,9 +126,9 @@ $$
 \begin{align}
 v_{\pi}(s)&=\mathbb{E}_{\pi}[R_{t+1}+\gamma G_{t+1}\mid S_t=s]\\
 &=\mathbb{E}_{\pi}[R_{t+1}\mid S_t=s]+\mathbb{E}_{\pi}[\gamma G_{t+1}\mid S_t=s]\\
-&=\sum_{a}\pi(a\mid s)\sum_r r\sum_{s'}p(s',r\mid s,a)+\gamma\sum_a\pi(a\mid s)\sum_r \sum_{s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
-&=\sum_{a}\pi(a\mid s)\sum_r \sum_{s'}rp(s',r\mid s,a)+\gamma\sum_a\pi(a\mid s)\sum_r \sum_{s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
-&=\sum_{a}\pi(a\mid s)\sum_{r,s'}rp(s',r\mid s,a)+\gamma\sum_a\pi(a\mid s)\sum_{r,s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_{a}\pi(a\mid s)\sum_r r\sum_{s'}p(s',r\mid s,a)\\&\quad+\gamma\sum_a\pi(a\mid s)\sum_r \sum_{s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_{a}\pi(a\mid s)\sum_r \sum_{s'}rp(s',r\mid s,a)\\&\quad+\gamma\sum_a\pi(a\mid s)\sum_r \sum_{s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
+&=\sum_{a}\pi(a\mid s)\sum_{r,s'}rp(s',r\mid s,a)\\&\quad+\gamma\sum_a\pi(a\mid s)\sum_{r,s'}p(s',r\mid s,a)\mathbb{E}_{\pi}[ G_{t+1}\mid S_{t+1}=s']\\
 &=\sum_a\pi(a\mid s)\sum_{r,s'}p(s',r\mid s,a)\left[r+\gamma v_{\pi}(s')\right]
 \end{align}
 $$
