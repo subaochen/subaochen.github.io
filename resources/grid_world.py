@@ -5,13 +5,7 @@
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
 #######################################################################
-
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.table import Table
-
-matplotlib.use('Agg')
 
 WORLD_SIZE = 5
 A_POS = [0, 1]
@@ -31,7 +25,7 @@ ACTION_PROB = 0.25
 def step(state, action):
     """每次走一步
     :param state:当前状态，坐标的list，比如[1,1]
-    :apram action:当前采取的动作，是对状态坐标的修正
+    :param action:当前采取的动作，是对状态坐标的修正
     :return:下一个状态（坐标的list）和reward
     """
     if state == A_POS:
@@ -49,69 +43,30 @@ def step(state, action):
     return next_state, reward
 
 
-def draw_image(image):
-    fig, ax = plt.subplots()
-    ax.set_axis_off()
-    tb = Table(ax, bbox=[0, 0, 1, 1])
-
-    nrows, ncols = image.shape
-    width, height = 1.0 / ncols, 1.0 / nrows
-
-    # Add cells
-    for (i, j), val in np.ndenumerate(image):
-        tb.add_cell(i, j, width, height, text=val,
-                    loc='center', facecolor='white')
-
-    # Row and column labels...
-    for i in range(len(image)):
-        tb.add_cell(i, -1, width, height, text=i+1, loc='right',
-                    edgecolor='none', facecolor='none')
-        tb.add_cell(-1, i, width, height/2, text=i+1, loc='center',
-                    edgecolor='none', facecolor='none')
-
-    ax.add_table(tb)
-
-
-def figure_3_2():
+def grid_world_value_function():
+    """计算每个单元格的状态价值函数
+    """
+    # 状态价值函数的初值
     value = np.zeros((WORLD_SIZE, WORLD_SIZE))
+    episode = 0
     while True:
-        # keep iteration until convergence
+        episode = episode + 1
+        # 每一轮迭代都会产生一个new_value，直到new_value和value很接近即收敛为止
         new_value = np.zeros_like(value)
         for i in range(WORLD_SIZE):
             for j in range(WORLD_SIZE):
                 for action in ACTIONS:
                     (next_i, next_j), reward = step([i, j], action)
                     # bellman equation
+                    # 由于每个方向只有一个reward和s'的组合，这里的p(s',r|s,a)=1
                     new_value[i, j] += ACTION_PROB * (reward + DISCOUNT * value[next_i, next_j])
-        if np.sum(np.abs(value - new_value)) < 1e-4:
-            draw_image(np.round(new_value, decimals=2))
-            plt.savefig('../images/rl/mdp/figure_3_2.png')
-            plt.close()
+        error = np.sum(np.abs(new_value - value))
+        if error < 1e-4:
             break
-        value = new_value
-
-
-def figure_3_5():
-    value = np.zeros((WORLD_SIZE, WORLD_SIZE))
-    while True:
-        # keep iteration until convergence
-        new_value = np.zeros_like(value)
-        for i in range(WORLD_SIZE):
-            for j in range(WORLD_SIZE):
-                values = []
-                for action in ACTIONS:
-                    (next_i, next_j), reward = step([i, j], action)
-                    # value iteration
-                    values.append(reward + DISCOUNT * value[next_i, next_j])
-                new_value[i, j] = np.max(values)
-        if np.sum(np.abs(new_value - value)) < 1e-4:
-            draw_image(np.round(new_value, decimals=2))
-            plt.savefig('../images/rl/mdp/figure_3_5.png')
-            plt.close()
-            break
+        # 观察每一轮次状态价值函数及其误差的变化情况
+        print(f"{episode}-{np.round(error,decimals=5)}:\n{np.round(new_value,decimals=2)}")
         value = new_value
 
 
 if __name__ == '__main__':
-    figure_3_2()
-    figure_3_5()
+    grid_world_value_function()
