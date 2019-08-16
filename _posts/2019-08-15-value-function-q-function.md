@@ -133,7 +133,7 @@ v_{\pi}(s)&=\mathbb{E}_{\pi}[R_{t+1}+\gamma G_{t+1}\mid S_t=s]\\
 \end{align}
 $$
 
-上面的推导过程用到了Exersice 3.11的结论，参见：[关于Exercise 3.11的解析](https://subaochen.github.io/deeplearning/2019/08/14/exercise-3-11-note/)
+上面的推导过程用到了Exersice 3.11的结论，参见：[关于Exercise 3.11的解析](https://subaochen.github.io/deeplearning/2019/08/14/exercise-3-11-note/)。需要注意的是，条件$$S_t=s$$是如何过渡到$$S_{t+1}=s'$$的：从状态$$s$$到$$s'$$经过了两个路径。我在很长时间里面没有搞清楚这个条件是如何变化的，直到有一天突然开了窍。
 
 作者在这里有一段非常精彩的论述，摘录如下：
 
