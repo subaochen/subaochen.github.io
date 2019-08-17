@@ -1,5 +1,6 @@
 #######################################################################
 # Copyright (C)                                                       #
+# 2019 Baochen Su(subaochen@126.com)                                  #
 # 2016-2018 Shangtong Zhang(zhangshangtong.cpp@gmail.com)             #
 # 2016 Kenta Shimada(hyperkentakun@gmail.com)                         #
 # Permission given to modify the code as long as you keep this        #
