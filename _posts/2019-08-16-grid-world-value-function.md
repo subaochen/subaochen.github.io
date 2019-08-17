@@ -126,3 +126,9 @@ if __name__ == '__main__':
 ```
 
 完整源码请参见：[grid world源码](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/resources/grid_world.py)
+
+# 结果解读
+
+上面程序的计算结果如下图所示：
+
+![grid world result](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/mdp/figure_3_2.png)
