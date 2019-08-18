@@ -16,10 +16,11 @@ B_PRIME_POS = [2, 3]
 DISCOUNT = 0.9
 
 # 把动作定义为对x，y坐标的增减改变
-ACTIONS = [np.array([0, -1]), # up
-           np.array([-1, 0]), # left
-           np.array([0, 1]),  # down
-           np.array([1, 0])]  # right
+# grid world坐标的定义：原点在左上角，X坐标向右延伸，Y坐标向下延伸
+ACTIONS = [np.array([0, -1]),  # up
+           np.array([-1, 0]),  # left
+           np.array([0, 1]),   # down
+           np.array([1, 0])]   # right
 ACTION_PROB = 0.25
 
 
@@ -69,5 +70,44 @@ def grid_world_value_function():
         value = new_value
 
 
+def grid_world_optimal_policy():
+    """计算格子世界的最优价值函数和最优策略
+    """
+    value = np.zeros((WORLD_SIZE, WORLD_SIZE))
+    # 通过一个数组来表示每一个格子的最优动作，1表示在相应的方向上最优的
+    optimal_policy = np.zeros((WORLD_SIZE, WORLD_SIZE, len(ACTIONS)))
+    episode = 0
+    while True:
+        episode = episode + 1
+        # keep iteration until convergence
+        new_value = np.zeros_like(value)
+        for i in range(WORLD_SIZE):
+            for j in range(WORLD_SIZE):
+                # 保存当前格子所有action下的state value
+                action_values = []
+                for action in ACTIONS:
+                    (next_i, next_j), reward = step([i, j], action)
+                    # value iteration
+                    action_values.append(reward + DISCOUNT * value[next_i, next_j])
+                new_value[i, j] = np.max(action_values)
+                optimal_policy[i, j] = get_optimal_actions(action_values)
+        error = np.sum(np.abs(new_value - value))
+        if error < 1e-4:
+            break
+        # 观察每一轮次状态价值函数及其误差的变化情况
+        print(f"{episode}-{np.round(error,decimals=5)}:\n{np.round(new_value,decimals=2)}")
+        value = new_value
+    print(f"optimal policy:{optimal_policy}")
+
+
+def get_optimal_actions(values):
+    optimal_actions = np.zeros(len(ACTIONS))
+    indices = np.where(values == np.amax(values))
+    for index in indices[0]:
+        optimal_actions[index] = 1
+    return optimal_actions
+
+
 if __name__ == '__main__':
     grid_world_value_function()
+    grid_world_optimal_policy()
