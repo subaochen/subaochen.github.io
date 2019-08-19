@@ -1,25 +1,38 @@
+---
+title: MDP学习笔记-最优价值函数和最优策略
+type: post
+categories:
+- deeplearning
+layout: post
+date: 2019-08-19
+tags: [deeplearning,mdp,optimal value function,optimal policy,reinforcement learning,grid world]
+status: publish
+published: true
+use_math: true
+comments: true
+---
+
 # 最优策略（optimal policy）
 
-如何衡量策略的好坏呢？作者的定义为：
+面对一个问题，可能有策略千万条，哪一条是最好的呢？事实上，总是存在：
 
-*如果策略$$\pi$$使得其状态的回报（return）的期望大于或者等于其他任意的策略$$\pi^{'}$$，则称策略$$\pi$$为最优策略。*
+> *如果策略$$\pi$$使得其状态的回报（return）的期望大于或者等于其他任意的策略$$\pi^{'}$$，则称策略$$\pi$$为最优策略。*
 
-如下图所示，对于给定的状态s，存在不同的策略$$\pi$$，使得从状态s到动作a的路径不同。不同的路径回报不同，能够使得状态s的回报最大的策略$$\pi$$即为最优策略。
-
-![optimal-policy-value-function](https://github.com/subaochen/subaochen.github.io/raw/master/images/rl/optimal-policy-value-function.png)
-
-根据$$v(s)$$的定义，$$v(s)$$即回报的期望，因此寻找最优策略的问题转化为探索不同的$$\pi$$，找到使得$$v(s)$$最大的$$\pi$$，记此时的状态价值函数为$$v_{*}(s)$$，即：
-
+状态的回报的期望即为$$v_{\pi}(s)$$，即：$$\mathbb{E}_{\pi}[G_t|S_t=s,A_t=a]$$。也就是说，对于任意状态$$s\in\mathcal{S}$$都有$$v_{\pi}(s)>=v_{\pi^{'}}(s)$$，则称$$v_{\pi}(s)$$为最优状态价值函数，记为$$v_*(s)$$。显然有：
 $$
-v_{*}(s)=\max_{\pi}v_{\pi}(s)
+v_*(s)=\max_{\pi}v_{\pi}(s), \forall s\in\mathcal{S}
 $$
+如下图所示，对于给定的状态s，存在不同的策略$$\pi$$，使得从状态s到动作a的路径不同。不同的路径回报不同，能够使得状态s的回报最大的策略$$\pi$$即为最优策略，记为$$\pi_*$$。
 
-直观的理解，如果假设动作a的价值是固定的，则不同的$$\pi$$使得从状态s出发的a的概率不同，即a的权重不同，因此导致$$v(s)$$不同。能够最大化$$v(s)$$的$$\pi$$即为最优策略，记为$$\pi_{*}$$。
+![optimal-policy-value-function](https://github.com/subaochen/subaochen.github.io/raw/master/images/rl/mdp/optimal-policy-value-function.png)
+
+直观的理解，不同的动作方向会导向不同的状态$$s'$$，带来不同的状态价值（$$s'$$状态价值的加权平均，即期望）。能够使得$$s'$$的状态价值最大化的动作记为最优的动作，或者说是最优策略。也就是说，通过状态价值函数判断最优策略，需要计算下一级节点的状态价值的期望，这就是作者所说的“one-step search”，只需要往前走一步，即可以判断当前的动作组合中，哪个是最优的：能够使得$$s'$$的状态价值函数的期望最大化的动作，选择这个最优的动作即为最佳策略。显然，这是一种完全的“贪心算法”，只基于下一步做出的决策。幸运的是，$$s'$$的状态价值函数实际上已经包含了长期的价值（思考一下状态价值函数的定义），因此：
+
+> A one-step-ahead search yields the long-term optimal actions.
 
 同理，对于动作价值函数$$q(s,a)$$也有类似的定义：
-
 $$
-q_{*}(a,s)=\max_{\pi}q_{\pi}(s,a)
+q_{*}(s,a)=\max_{\pi}q_{\pi}(s,a)
 $$
 
 即，策略$$\pi_{*}$$使得在状态s下采取动作a时其动作价值函数取最大值。

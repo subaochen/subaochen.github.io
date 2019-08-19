@@ -16,11 +16,12 @@ B_PRIME_POS = [2, 3]
 DISCOUNT = 0.9
 
 # 把动作定义为对x，y坐标的增减改变
-# grid world坐标的定义：原点在左上角，X坐标向右延伸，Y坐标向下延伸
-ACTIONS = [np.array([0, -1]),  # up
-           np.array([-1, 0]),  # left
-           np.array([0, 1]),   # down
-           np.array([1, 0])]   # right
+# 按照二维数组的习惯，grid world坐标的定义为原点在左上角，Y坐标向右延伸，X坐标向下延伸
+# 注意到，这和数学上通常的坐标定义是不一样的
+ACTIONS = [np.array([0, -1]),  # left
+           np.array([-1, 0]),  # up
+           np.array([0, 1]),   # right
+           np.array([1, 0])]   # down
 ACTION_PROB = 0.25
 
 
@@ -101,6 +102,11 @@ def grid_world_optimal_policy():
 
 
 def get_optimal_actions(values):
+    """计算当前轮次格子的最优动作
+    :param values:格子的状态价值
+    :return: 当前的最优动作。解读这个最优动作数组，要参考ACTIONS中四个动作的方向定义，
+    数值为1表示此动作为最优动作
+    """
     optimal_actions = np.zeros(len(ACTIONS))
     indices = np.where(values == np.amax(values))
     for index in indices[0]:
