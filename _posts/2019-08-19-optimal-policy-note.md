@@ -12,6 +12,7 @@ use_math: true
 comments: true
 ---
 
+
 # 最优策略（optimal policy）
 
 面对一个问题，可能有策略千万条，哪一条是最好的呢？事实上，总是存在：
@@ -19,9 +20,11 @@ comments: true
 > *如果策略$$\pi$$使得其状态的回报（return）的期望大于或者等于其他任意的策略$$\pi^{'}$$，则称策略$$\pi$$为最优策略。*
 
 状态的回报的期望即为$$v_{\pi}(s)$$，即：$$\mathbb{E}_{\pi}[G_t|S_t=s,A_t=a]$$。也就是说，对于任意状态$$s\in\mathcal{S}$$都有$$v_{\pi}(s)>=v_{\pi^{'}}(s)$$，则称$$v_{\pi}(s)$$为最优状态价值函数，记为$$v_*(s)$$。显然有：
+
 $$
 v_*(s)=\max_{\pi}v_{\pi}(s), \forall s\in\mathcal{S}
 $$
+
 如下图所示，对于给定的状态s，存在不同的策略$$\pi$$，使得从状态s到动作a的路径不同。不同的路径回报不同，能够使得状态s的回报最大的策略$$\pi$$即为最优策略，记为$$\pi_*$$。
 
 ![optimal-policy-value-function](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/mdp/optimal-policy-value-function.png)
@@ -31,11 +34,13 @@ $$
 > A `one-step-ahead search` yields the long-term optimal actions.
 
 同理，对于最优动作价值函数$$q(s,a)$$也有类似的定义：
+
 $$
 q_{*}(s,a)=\max_{\pi}q_{\pi}(s,a)
 $$
 
 如果已知$$q_*(s,a)$$，此时的动作$$a$$已经是最优动作了，因此动作$$a$$导向的状态$$s'$$必然是最优的状态，求解$$q_*(s,a)$$只需要将动作$$a$$下的$$s'$$的价值加权平均即可：
+
 $$
 \begin{align}
 q_*(s,a)
@@ -43,7 +48,9 @@ q_*(s,a)
 &=\mathbb{E}[R_{t+1}+\gamma v_*(S_{t+1})\mid S_t=s,A_t=a]\tag{2}
 \end{align}
 $$
+
 注意和通常的$$q(s,a)$$定义的区别：
+
 $$
 \begin{align}
 q(s,a)
@@ -51,6 +58,7 @@ q(s,a)
 &=\mathbb{E}[R_{t+1}+\gamma v(S_{t+1})\mid S_t=s,A_t=a]
 \end{align}
 $$
+
 下图可以直观的解释$$q_*(s,a)$$的意义：
 
 ![q-optimal-function](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/mdp/q-optimal-function.png)
