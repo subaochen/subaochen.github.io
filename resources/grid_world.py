@@ -47,7 +47,7 @@ def step(state, action):
 
 
 def grid_world_value_function():
-    """计算每个单元格的状态价值函数
+    """使用iterative policy evaluation算法计算每个单元格的状态价值函数
     """
     # 状态价值函数的初值
     value = np.zeros((WORLD_SIZE, WORLD_SIZE))
@@ -69,6 +69,31 @@ def grid_world_value_function():
         # 观察每一轮次状态价值函数及其误差的变化情况
         print(f"{episode}-{np.round(error,decimals=5)}:\n{np.round(new_value,decimals=2)}")
         value = new_value
+
+
+def grid_world_value_function_in_place():
+    """使用iterative policy evaluation（in place）算法计算每个单元格的状态价值函数
+    :TODO:画出两种类型的算法的收敛速度对比图
+    """
+    # 状态价值函数的初值
+    value = np.zeros((WORLD_SIZE, WORLD_SIZE))
+    episode = 0
+    while True:
+        episode = episode + 1
+        old_value = value.copy()
+        for i in range(WORLD_SIZE):
+            for j in range(WORLD_SIZE):
+                for action in ACTIONS:
+                    (next_i, next_j), reward = step([i, j], action)
+                    # bellman equation
+                    # 由于每个方向只有一个reward和s'的组合，这里的p(s',r|s,a)=1
+                    value_s_prime = value[next_i, next_j]
+                    value[i, j] += ACTION_PROB * (reward + DISCOUNT * value_s_prime)
+        error = np.sum(np.abs(old_value - value))
+        if error < 1e-4:
+            break
+        # 观察每一轮次状态价值函数及其误差的变化情况
+        print(f"in place-{episode}-{np.round(error,decimals=5)}:\n{np.round(value,decimals=2)}")
 
 
 def grid_world_optimal_policy():
@@ -115,5 +140,6 @@ def get_optimal_actions(values):
 
 
 if __name__ == '__main__':
-    grid_world_value_function()
-    grid_world_optimal_policy()
+    #grid_world_value_function()
+    grid_world_value_function_in_place()
+    #grid_world_optimal_policy()
