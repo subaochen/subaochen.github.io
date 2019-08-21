@@ -14,6 +14,8 @@ comments: true
 
 对于Policy improvement作者没有给出严格的数学证明，其实至少从下面的角度可以严格证明Policy improvement的可行性。
 
+# 从期望的一个性质说起
+
 首先证明期望的一个性质：
 
 > 至少存在一个随机变量$$x$$，其值不小于随机变量$$X$$的期望$$\mathbb{E}[X]$$
@@ -40,6 +42,8 @@ $$
 
 也就是说，函数$$f$$的最大值不小于$$f$$的期望，即在有限集$$A$$上，一定存在值（最大值）不小于$$f$$的期望。
 
+# 状态价值函数和动作价值函数的关系
+
 有了以上的结论，我们考察$$v_{\pi}(s)$$和$$q_{\pi}(s,a)$$的关系：
 
 $$
@@ -57,17 +61,19 @@ $$
 于是有：
 
 $$
-q_{\pi}(s,\pi^{'}(s))\ge v_{\pi}(s),\forall s\in\mathcal{S}\tag{1}\label{eq1}
+q_{\pi}(s,\pi^{'}(s))\ge v_{\pi}(s),\forall s\in\mathcal{S}\label{eq1}
 $$
 
-利用这个结论，我们可以证明：
+# policy improvement可行性证明
 
+利用上面的结论（公式$$\ref{eq1}$$），我们可以证明：
 $$
 v_{\pi^{'}}(s)\ge v_{\pi}(s),\forall s\in\mathcal{S}
 $$
 
-证明如下：
+即greedy policy是policy improvement的可行策略。
 
+证明如下：
 $$
 \begin{align}
 v_{\pi}(s)&\le q_{\pi}(s,\pi^{'}(s))\tag{2-1}\\
@@ -119,4 +125,3 @@ $$
   * 3-6将结果合并在一起，利用了期望的期望是其本身的性质。
 
 也就是说，**对于任意的$$s\in\mathcal{S}$$，我们总是能够找到一个策略$$\pi^{'}$$使得其状态价值函数不小于策略$$\pi$$下的状态价值函数，即策略$$\pi^{'}\ge\pi$$**，这就是policy improvement的理论依据，具体的实现就是`greedy策略`：对于任意的$$s\in\mathcal{S}$$，找到使$$q(s,a)$$最大化的动作$$a$$即为最优策略。
-
