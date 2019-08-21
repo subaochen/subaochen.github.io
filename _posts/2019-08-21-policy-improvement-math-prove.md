@@ -61,7 +61,7 @@ $$
 于是有：
 
 $$
-q_{\pi}(s,\pi^{'}(s))\ge v_{\pi}(s),\forall s\in\mathcal{S}\label{eq1}
+q_{\pi}(s,\pi^{'}(s))\ge v_{\pi}(s),\forall s\in\mathcal{S}\label{eq1}\tag{1}
 $$
 
 # policy improvement可行性证明
