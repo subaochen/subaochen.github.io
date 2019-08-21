@@ -94,10 +94,12 @@ $$
 
 * 2-5是$$q_{\pi}(S_{t+1},\pi^{'}(S_{t+1}))$$的展开。
 
-* 2-6是使用了期望的加法规则和“期望的期望是其本身”这个期望的性质，具体来说，其推导过程可参见下图：
+* 2-6是使用了期望的加法规则和“期望的期望是其本身”这个期望的性质，有必要单独拿出来说一下。
+
+具体来说，2-6的推导过程可参见下图：
 
   ![greedy policy prove](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/greedy-policy-prove.png)
-  $$
+$$
   \begin{align}
   &\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1},A_{t+1}=\pi^{'}(S_{t+1})]\mid S_t=s]\tag{3-1}\\
   &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]+\mathbb{E}_{\pi^{'}}[\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1},A_{t+1}=\pi^{'}(S_{t+1})]\mid S_t=s]\tag{3-2}\\
@@ -105,7 +107,7 @@ $$
   &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]+\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_t=s]\tag{3-4}\\
   &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma R_{t+2}+\gamma^2v_{\pi}(S_{t+2})\mid S_t=s]\tag{3-5}
   \end{align}
-  $$
+$$
   其中：
 
   * 3-2使用了期望的加法规则。
