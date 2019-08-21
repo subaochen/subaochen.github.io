@@ -2,7 +2,7 @@
 title: policy improvement的数学证明
 type: post
 categories:
--- Reinforcement Learning
+- Reinforcement Learning
 layout: post
 date: 2019-08-21
 tags: [deeplearning,reinforcement learning,policy improvement]

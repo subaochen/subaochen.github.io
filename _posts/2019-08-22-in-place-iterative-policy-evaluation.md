@@ -2,7 +2,7 @@
 title: In place iterative policy evaluation
 type: post
 categories:
--- Reinforcement Learning
+- Reinforcement Learning
 layout: post
 date: 2019-08-22
 tags: [deeplearning,reinforcement learning,policy evaluation]
