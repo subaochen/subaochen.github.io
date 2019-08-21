@@ -103,19 +103,20 @@ $$
 $$
 \begin{align}
   &\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1},A_{t+1}=\pi^{'}(S_{t+1})]\mid S_t=s]\tag{3-1}\\
-  &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]\\\qquad&+\mathbb{E}_{\pi^{'}}[\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1},A_{t+1}=\pi^{'}(S_{t+1})]\mid S_t=s]\tag{3-2}\\
-  &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]+\mathbb{E}_{\pi^{'}}[\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1}]\mid S_t=s]\tag{3-3}\\
-  &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]+\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_t=s]\tag{3-4}\\
-  &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma R_{t+2}+\gamma^2v_{\pi}(S_{t+2})\mid S_t=s]\tag{3-5}
+  &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]\tag{3-2}\\
+  &\quad+\mathbb{E}_{\pi^{'}}[\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1},A_{t+1}=\pi^{'}(S_{t+1})]\mid S_t=s]\tag{3-3}\\
+  &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]+\mathbb{E}_{\pi^{'}}[\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1}]\mid S_t=s]\tag{3-4}\\
+  &=\mathbb{E}_{\pi^{'}}[R_{t+1}\mid S_t=s]+\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_t=s]\tag{3-5}\\
+  &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma R_{t+2}+\gamma^2v_{\pi}(S_{t+2})\mid S_t=s]\tag{3-6}
   \end{align}
 $$
 
   其中：
 
-  * 3-2使用了期望的加法规则。
-  * 3-3脱去了$$A_{t+1}$$这个条件，因为在策略$$\pi^{'}$$下，总是会寻找最优的动作$$a$$，这和期望的下标$$\pi^{'}$$有同样的含义，因此可以去掉这个条件。
-  * 3-4进一步脱掉了$$S_{t+1}$$这个条件。从上图可以看出，在策略$$\pi^{'}$$（寻找最优的动作$$a$$）下求$$v_{\pi}(S_{t+2})$$，无论从$$s$$出发还是从$$s'$$出发都是一样的，因此条件期望可以进一步简化掉多余的条件$$S_{t+1}$$，其结果不会受到影响。
-  * 3-5将结果合并在一起，利用了期望的期望是其本身的性质。
+  * 3-2和3-3使用了期望的加法规则。
+  * 3-4脱去了$$A_{t+1}$$这个条件，因为在策略$$\pi^{'}$$下，总是会寻找最优的动作$$a$$，这和期望的下标$$\pi^{'}$$有同样的含义，因此可以去掉这个条件。
+  * 3-5进一步脱掉了$$S_{t+1}$$这个条件。从上图可以看出，在策略$$\pi^{'}$$（寻找最优的动作$$a$$）下求$$v_{\pi}(S_{t+2})$$，无论从$$s$$出发还是从$$s'$$出发都是一样的，因此条件期望可以进一步简化掉多余的条件$$S_{t+1}$$，其结果不会受到影响。
+  * 3-6将结果合并在一起，利用了期望的期望是其本身的性质。
 
 也就是说，**对于任意的$$s\in\mathcal{S}$$，我们总是能够找到一个策略$$\pi^{'}$$使得其状态价值函数不小于策略$$\pi$$下的状态价值函数，即策略$$\pi^{'}\ge\pi$$**，这就是policy improvement的理论依据，具体的实现就是`greedy策略`：对于任意的$$s\in\mathcal{S}$$，找到使$$q(s,a)$$最大化的动作$$a$$即为最优策略。
 
