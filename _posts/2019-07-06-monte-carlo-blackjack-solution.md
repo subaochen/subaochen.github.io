@@ -5,7 +5,7 @@ categories:
 - Reinforcement Learning
 layout: post
 date: 2019-07-06
-tags: [deep learning,reinformcement learning, monte carlo, blackjack]
+tags: [deep learning,reinforcement learning, monte carlo, blackjack]
 status: publish
 published: true
 use_math: true
