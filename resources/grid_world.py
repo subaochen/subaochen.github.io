@@ -7,6 +7,7 @@
 # declaration at the top                                              #
 #######################################################################
 import numpy as np
+import matplotlib.pyplot as ply
 
 WORLD_SIZE = 5
 A_POS = [0, 1]
@@ -16,7 +17,7 @@ B_PRIME_POS = [2, 3]
 DISCOUNT = 0.9
 
 # 把动作定义为对x，y坐标的增减改变
-# 按照二维数组的习惯，grid world坐标的定义为原点在左上角，Y坐标向右延伸，X坐标向下延伸
+# 按照二维数组[x,y]的习惯，grid world坐标的定义为原点在左上角，Y坐标向右延伸，X坐标向下延伸
 # 注意到，这和数学上通常的坐标定义是不一样的
 ACTIONS = [np.array([0, -1]),  # left
            np.array([-1, 0]),  # up
@@ -52,6 +53,7 @@ def grid_world_value_function():
     # 状态价值函数的初值
     value = np.zeros((WORLD_SIZE, WORLD_SIZE))
     episode = 0
+    history = {}
     while True:
         episode = episode + 1
         # 每一轮迭代都会产生一个new_value，直到new_value和value很接近即收敛为止
@@ -64,11 +66,13 @@ def grid_world_value_function():
                     # 由于每个方向只有一个reward和s'的组合，这里的p(s',r|s,a)=1
                     new_value[i, j] += ACTION_PROB * (reward + DISCOUNT * value[next_i, next_j])
         error = np.sum(np.abs(new_value - value))
+        history[episode] = error
         if error < 1e-4:
             break
         # 观察每一轮次状态价值函数及其误差的变化情况
         print(f"{episode}-{np.round(error,decimals=5)}:\n{np.round(new_value,decimals=2)}")
         value = new_value
+    return history, value
 
 
 def grid_world_value_function_in_place():
@@ -78,22 +82,27 @@ def grid_world_value_function_in_place():
     # 状态价值函数的初值
     value = np.zeros((WORLD_SIZE, WORLD_SIZE))
     episode = 0
+    history = {}
     while True:
         episode = episode + 1
         old_value = value.copy()
         for i in range(WORLD_SIZE):
             for j in range(WORLD_SIZE):
+                episode_value = 0
                 for action in ACTIONS:
                     (next_i, next_j), reward = step([i, j], action)
                     # bellman equation
                     # 由于每个方向只有一个reward和s'的组合，这里的p(s',r|s,a)=1
                     value_s_prime = value[next_i, next_j]
-                    value[i, j] += ACTION_PROB * (reward + DISCOUNT * value_s_prime)
+                    episode_value += ACTION_PROB * (reward + DISCOUNT * value_s_prime)
+                value[i, j] = episode_value
         error = np.sum(np.abs(old_value - value))
+        history[episode] = error
         if error < 1e-4:
             break
         # 观察每一轮次状态价值函数及其误差的变化情况
         print(f"in place-{episode}-{np.round(error,decimals=5)}:\n{np.round(value,decimals=2)}")
+    return history, value
 
 
 def grid_world_optimal_policy():
@@ -139,7 +148,20 @@ def get_optimal_actions(values):
     return optimal_actions
 
 
+def plot_his(history, title):
+    for his in history:
+        index, error = his.keys(), his.values()
+        ply.plot(index, error)
+    ply.title(title)
+    ply.xlabel("episode")
+    ply.ylabel("error")
+    if len(history) != 1:
+        ply.legend(["two arrays version", "in place version"])
+    ply.show()
+
+
 if __name__ == '__main__':
-    #grid_world_value_function()
-    grid_world_value_function_in_place()
-    #grid_world_optimal_policy()
+    history1, _ = grid_world_value_function()
+    history2, _ = grid_world_value_function_in_place()
+    plot_his([history1, history2], "iterative policy evaluation error")
+    grid_world_optimal_policy()
