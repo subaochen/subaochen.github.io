@@ -73,7 +73,7 @@ $$
 v_{\pi}(s)&\le q_{\pi}(s,\pi^{'}(s))\tag{2-1}\\
 &=\mathbb{E}[R_{t+1}+\gamma v_{\pi}(S_{t+1})\mid S_t=s,A_t=\pi^{'}(s)]\tag{2-2}\\
 &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma v_{\pi}(S_{t+1})\mid S_t=s]\tag{2-3}\\
-&\le\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma q_{\pi}(S_{t+1},\pi^{'}(S_{t+1}))\mid S_t=s]\\
+&\le\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma q_{\pi}(S_{t+1},\pi^{'}(S_{t+1}))\mid S_t=s]\tag{2-4}\\
 &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma\mathbb{E}_{\pi^{'}}[R_{t+2}+\gamma v_{\pi}(S_{t+2})\mid S_{t+1},A_{t+1}=\pi^{'}(S_{t+1})]\mid S_t=s]\tag{2-5}\\
 &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma R_{t+2}+\gamma^2v_{\pi}(S_{t+2})\mid S_t=s]
 \tag{2-6}\\
@@ -90,3 +90,4 @@ $$
 * 从第5步到第6步，是使用了期望的加法规则和“期望的期望是其本身”这个期望的性质。
 
 也就是说，**对于任意的$$s\in\mathcal{S}$$，我们总是能够找到一个策略$$\pi^{'}$$使得其状态价值函数不小于策略$$\pi$$下的状态价值函数，即策略$$\pi^{'}\ge\pi$$**，这就是policy improvement的理论依据，具体的实现就是`greedy策略`：对于任意的$$s\in\mathcal{S}$$，找到使$$q(s,a)$$最大化的动作$$a$$即为最优策略。
+
