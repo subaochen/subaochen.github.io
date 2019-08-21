@@ -5,7 +5,7 @@ categories:
 -- Reinforcement Learning
 layout: post
 date: 2019-08-22
-tags: [deeplearning,dp,reinforcement learning,policy evaluation]
+tags: [deeplearning,reinforcement learning,policy evaluation]
 status: publish
 published: true
 use_math: true
