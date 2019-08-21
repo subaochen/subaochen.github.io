@@ -70,7 +70,7 @@ $$
 
 $$
 \begin{align}
-v_{\pi}(s)&\le q_{\pi}(s,\pi^{'}(s))\\\tag{2-1}
+v_{\pi}(s)&\le q_{\pi}(s,\pi^{'}(s))\tag{2-1}\\
 &=\mathbb{E}[R_{t+1}+\gamma v_{\pi}(S_{t+1})\mid S_t=s,A_t=\pi^{'}(s)]\\
 &=\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma v_{\pi}(S_{t+1})\mid S_t=s]\\
 &\le\mathbb{E}_{\pi^{'}}[R_{t+1}+\gamma q_{\pi}(S_{t+1},\pi^{'}(S_{t+1}))\mid S_t=s]\\
