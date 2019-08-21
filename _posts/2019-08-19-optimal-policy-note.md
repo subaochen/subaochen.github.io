@@ -2,7 +2,7 @@
 title: MDP学习笔记-最优价值函数和最优策略
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-08-19
 tags: [deeplearning,mdp,optimal value function,optimal policy,reinforcement learning,grid world]

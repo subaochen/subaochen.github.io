@@ -2,7 +2,7 @@
 title: MC学习笔记-蒙特卡罗方法进行状态价值评估
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-06-29
 tags: [monte carlo,deeplearning,model-free,reinforcement learning]

@@ -2,7 +2,7 @@
 title: MDP学习笔记-grid world问题的解析
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-08-16
 tags: [deeplearning,mdp,value function,reinforcement learning,grid world]

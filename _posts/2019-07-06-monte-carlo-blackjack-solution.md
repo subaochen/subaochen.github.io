@@ -2,7 +2,7 @@
 title: MC学习笔记-蒙特卡洛法求解Blackjack的最优策略 
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-07-06
 tags: [deep learning,reinformcement learning, monte carlo, blackjack]

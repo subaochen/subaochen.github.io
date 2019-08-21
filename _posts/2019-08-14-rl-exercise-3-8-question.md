@@ -2,7 +2,7 @@
 title:  关于Exercise 3.8的疑问
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-08-14
 tags: [deeplearning,reward,return,reinforcement learning]

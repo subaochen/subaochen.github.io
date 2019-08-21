@@ -2,7 +2,7 @@
 title: MDP学习笔记-基本的交互过程
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-06-03
 tags: [deeplearning,mdp,reinforcement learning]

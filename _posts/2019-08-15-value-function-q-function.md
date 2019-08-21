@@ -2,7 +2,7 @@
 title: MDP学习笔记-价值函数
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-08-15
 tags: [deeplearning,mdp,value function,reinforcement learning]
