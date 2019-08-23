@@ -2,7 +2,7 @@
 title: DP学习笔记-策略评估
 type: post
 categories:
-- deeplearning
+- Reinforcement Learning
 layout: post
 date: 2019-06-16
 tags: [deeplearning,dynamic programming,reinforcement learning]

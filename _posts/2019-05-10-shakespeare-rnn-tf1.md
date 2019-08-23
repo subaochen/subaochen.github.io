@@ -5,21 +5,17 @@ categories:
 - deeplearning
 layout: post
 date: 2019-05-10
-tags: [深度学习, RNN]
+tags: [deep learning, RNN]
 status: publish
 published: true
 comments: true
-
 ---
+
 
 这是学习tensorflow官网资料：https://tensorflow.google.cn/tutorials/sequences/text_generation 的笔记，通过RNN喂入莎士比亚的戏剧文本，尝试让电脑自己写出莎士比亚风格的文章。运行这个简单的例子需要强大的GPU，在我的笔记本上（MX 150只有2G显存）无法运行，如果只使用CPU需要较长的时间，需要有心理准备。可以在google colab上面运行测试，速度10x以上的提升。
 
 这是一个many to many的示例（下图中倒数第二个）。实际上，RNN可能有下图所示的几种模式(参见：http://karpathy.github.io/2015/05/21/rnn-effectiveness/)：
-![diags](images/diags.jpeg)
-
-@TODO
-
-* 加入LSTM重新测试
+![diags](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/diags.jpeg)
 
 ## 启用eager execution
 
@@ -91,10 +87,12 @@ print(text[:250])
     
     First Citizen:
     First, you know Caius Marcius is chief enemy to the people.
-    
+
 
 
 ## 文本向量化
+
+这里相当于数据的预处理。神经网络并不能直接处理字符，因而需要将字符数字化。对于字符而言，所谓的"文本向量化"可以获得每个字符的序号，然后按照序号进行one-hot编码即可实现向量化(Embedding层的功能)。所以，重要的一步是字符的数字化，即将字符转化为其在**字典中的序号**。
 文本向量化才能喂入RNN学习，需要三个步骤：
 1. 构造文本字典vocab
 1. 建立字典索引char2idx，将字典的每一个字符映射为数字
@@ -174,10 +172,10 @@ print ('{} ---- characters mapped to int ---- > {}'.format(text[:13], text_as_in
 
 
 ## 构造训练数据（样本数据）
-把数据喂给RNN之前，需要构造/划分好训练数据和验证数据。在这里，无需验证和测试数据，因此只需要划分好训练数据即可。下面的代码中，每次喂给RNN的训练数据是seq_length个字符。
+把数据喂给RNN之前，需要构造/划分好训练数据和验证数据。在这里，无需验证和测试数据，因此只需要划分好训练数据即可。下面的代码中，每次喂给RNN的训练数据是seq_length个字符。seq_length是一个认为设定的训练尺寸，即RNN的学习单位，相当于我们人类在学习阅读时，一次进入眼睛的字符数：天才可以一目十行，普通人也许只能逐行阅读。可以观察不同的seq_length对训练结果的影响。
 
 但是，实际内部处理时，RNN还是要一个一个字符消化，即RNN的输入维度是len(vocab)，参见下图(出处：http://karpathy.github.io/2015/05/21/rnn-effectiveness/ )：
-![charseq](/images/charseq.jpeg)
+![charseq](http://softlab.sdut.edu.cn/blog/subaochen/wp-content/uploads/sites/4/2019/05/charseq.jpeg)
 
 
 ```python
@@ -253,10 +251,11 @@ print(dataset)
 
 
 input_example就是输入样本，target_example就是目标样本
-可以看出，这里的输入样本和目标样本的尺寸都是seq_length，整个文本被batch_size
-分割成了len(text_as_int)/seq_length组输入样本和目标样本
+可以看出，这里的输入样本和目标样本的尺寸都是seq_length，整个文本分割成了len(text_as_int)/seq_length组输入样本和目标样本。
 
-训练的时候是成对喂入输入样本和目标样本的：但是，其实内部还是一个字符一个字符来计算的，即先取输入样本的第一个字符作为x和目标样本的第一个字符作为y，然后依次处理完输入样本和目标样本的每一个字符，这个batch计算完毕。
+训练的时候是成对喂入输入样本和目标样本的：但是，其实内部当然还是一个字符一个字符来计算的，即先取输入样本的第一个字符作为x和目标样本的第一个字符作为y，然后依次处理完输入样本和目标样本的每一个字符，这个batch计算完毕。
+
+下面先观察一下输入样本和目标样本：
 
 
 ```python
@@ -297,7 +296,7 @@ for i, (input_idx, target_idx) in enumerate(zip(input_example[:5], target_exampl
       expected output: 1 (' ')
 
 
-## 使用批次重新构造训练数据
+## 使用批次（batch_size）重新构造训练数据
 
 到目前为止，使用了如下的变量来表示文本的不同形态：
 * text: 原始的文本
@@ -305,7 +304,7 @@ for i, (input_idx, target_idx) in enumerate(zip(input_example[:5], target_exampl
 * sequences：按照seq_length+1切分的Dataset
 * dataset：将每一个seqences划分为input_text和target_text的Dataset，此时的dataset其实比sequences大了一倍
 
-到这个阶段，我们还需要将dataset中的（input_text，target_text）对进行shuffle处理。注意，这里的shuffle是以seq_length长度的input_text/target_text对为单位的，不是字符级别的shuffle。想一下dataset的数据结构。
+到这个阶段，我们还需要将dataset中的（input_text，target_text）对进行shuffle处理，目的是增加数据的随机性，防止人为的特定模式影响，提高学习效果。注意，这里的shuffle是以seq_length长度的input_text/target_text对为单位的，不是字符级别的shuffle。想一下dataset的数据结构:((100,),(100,))。
 
 另外，还需要进一步对数据进行batch处理以便迭代训练。
 
@@ -314,6 +313,8 @@ for i, (input_idx, target_idx) in enumerate(zip(input_example[:5], target_exampl
 ### 关于BATCH_SIZE的理解
 
 batch_size即每个批次喂入RNN的样本数量。这里的batch_size=32意味着，每次喂入RNN 32个输入样本（注意每个样本是seq_length大小的），RNN才会更新梯度。也就是说，**每个BATCH更新一次梯度**，有多少个batch就更新多少次梯度。
+
+因此可以看出，假设batch_size=32， seq_length=100，则RNN要吃入32*100个字符后才更新一次梯度，这就要求用于训练的字符数要足够多才能达到好的训练效果。
 
 
 ```python
@@ -332,9 +333,10 @@ steps_per_epoch = examples_per_epoch//BATCH_SIZE
 # (TF data is designed to work with possibly infinite sequences,
 # so it doesn't attempt to shuffle the entire sequence in memory. Instead,
 # it maintains a buffer in which it shuffles elements).
+# 只在BUFFER_SIZE内进行shuffle操作，即每次最多取BUFFER_SIZE个样本进行shuffle操作。
 BUFFER_SIZE = 10000
 
-# 
+# 此时的dataset是已经batch化了的，即shape为(batch_size, seqence_length)
 dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True)
 dataset
 ```
@@ -349,9 +351,9 @@ dataset
 # 创建模型
 
 模型分为三层：
-1. 嵌入层（layers.Embedding)。关于嵌入的概念可参考：https://tensorflow.google.cn/guide/embedding 。简单的说，嵌入层的作用是将输入(本例是输入字符的索引)映射为一个高维度向量（dense vector），其好处是可以借助于向量的方法，比如欧氏距离或者角度来度量两个向量的相似性。对于文本而言，就是两个词的相似度。
-2. GRU层（Gated Recurrent Unit）
-3. 全链接层
+1. 嵌入层（layers.Embedding)。关于嵌入的概念可参考：https://tensorflow.google.cn/guide/embedding 。简单的说，嵌入层的作用是将输入(本例是输入字符的索引)映射为一个高维度向量（dense vector），其好处是可以借助于向量的方法，比如欧氏距离或者角度来度量两个向量的相似性。对于文本而言，就是两个词的相似度。embedding_dim为生成的嵌入的维度，即每个输入的维度。
+2. GRU层（Gated Recurrent Unit）或者LSTM
+3. 全链接层，输出概率矩阵。
 
 # 设置模型参数，实例化模型
 为了能够在笔记本电脑上运行，特意调小了embedding_dim和rnn_units两个参数
@@ -376,11 +378,13 @@ rnn_units = 512
 
 ```python
 if tf.test.is_gpu_available():
-  rnn = tf.keras.layers.CuDNNGRU
+  #rnn = tf.keras.layers.CuDNNGRU
+  # CuDNNLSTM的执行速度大概是普通的LSTM的5倍以上
+  lstm = tf.keras.layers.CuDNNLSTM
 else:
   import functools
-  rnn = functools.partial(
-    tf.keras.layers.GRU, recurrent_activation='sigmoid')
+  #rnn = functools.partial(tf.keras.layers.GRU, recurrent_activation='sigmoid')
+  lstm = functools.partial(tf.keras.layers.LSTM, recurrent_activation='sigmoid')
 ```
 
 Embedding层的batch_input_shape，第二个维度定义为None，即可以接受任意长度的字符串，不一定是seq_length长度的。当然，在训练的时候给的长度是seq_length，但是在预测时给的初始字符串长度是随意的。
@@ -392,7 +396,7 @@ def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
     tf.keras.layers.Embedding(vocab_size, embedding_dim, 
                               batch_input_shape=[batch_size, None]),
     # 替换rnn为LSTM
-    tf.keras.layers.LSTM(rnn_units,
+    lstm(rnn_units,
         return_sequences=True, 
         recurrent_initializer='glorot_uniform',
         stateful=True),
@@ -416,12 +420,12 @@ model.summary()
     =================================================================
     embedding (Embedding)        (32, None, 256)           16640     
     _________________________________________________________________
-    lstm (LSTM)                  (32, None, 512)           1574912   
+    cu_dnnlstm (CuDNNLSTM)       (32, None, 512)           1576960   
     _________________________________________________________________
     dense (Dense)                (32, None, 65)            33345     
     =================================================================
-    Total params: 1,624,897
-    Trainable params: 1,624,897
+    Total params: 1,626,945
+    Trainable params: 1,626,945
     Non-trainable params: 0
     _________________________________________________________________
 
@@ -442,25 +446,28 @@ for input_example_batch, target_example_batch in dataset.take(1):
     (32, 100, 65) # (batch_size, sequence_length, vocab_size)
 
 
-<font color="red">这里为什么使用random.categorical抽取数据？</font>
+Q:这里为什么使用tf.random.categorical抽取数据？
+A:模型的输出（shape为(batch_size,sequence_length,vcab_size)）是概率，即对应的每一个字符都是一个vcab_size长度的向量，此向量中的每个值都是一个概率，指示了预测为对应位置的字符的概率。因此，使用tf.random.categorical可以根据此输出向量进行抽样，获得预测字符的索引。tf.random.categorical的用法可以参考：[tensorflow的二项分布和多项分布](https://subaochen.github.io/deeplearning/2019/05/14/random-binomial-categorical-tf/)
 
 
 ```python
-# 检查第0批数据？
+# 检查第0批数据。
+# example_batch_predictions[0]的shape为(100,65)
+# sampled_indices的shape为(100,1)
 sampled_indices = tf.random.categorical(example_batch_predictions[0], num_samples=1)
-sampled_indices = tf.squeeze(sampled_indices,axis=-1).numpy()
+sampled_indices = tf.squeeze(sampled_indices,axis=-1).numpy() # 去掉维度为1的列
 sampled_indices
 ```
 
 
 
 
-    array([33, 35, 40, 32, 32, 40, 19,  2, 22, 63, 38, 49, 23, 48, 25, 50, 44,
-           45,  5, 17,  4, 36, 23,  4, 64, 34, 21, 58, 38, 20, 33, 46, 35, 20,
-            7, 31, 45,  9, 20, 45, 28, 28, 31,  9, 28, 26, 57, 20, 28, 12, 34,
-           59, 11, 47, 45, 36, 40, 58, 13, 63,  6, 17, 35, 54, 13, 24,  0, 39,
-           39, 21, 15, 18,  8, 21, 17, 30,  7, 62, 47, 46,  2,  4, 27, 55, 32,
-           15, 42, 49, 15, 13, 21, 40, 12,  6, 35, 34,  4, 26, 49, 38])
+    array([41, 22, 53, 57, 64, 41, 12, 41,  5, 45, 24, 39, 41, 48, 16, 19, 39,
+           18, 11, 55, 17, 12, 58, 32, 35, 26,  6, 40, 38, 17, 25, 47, 18, 20,
+           53,  9, 17, 18, 48, 50, 45, 32, 28, 57, 35, 10, 32, 17, 30, 35, 52,
+           55, 63, 37,  9, 61, 48, 20, 64, 62, 21, 49, 21, 12, 47,  5, 61, 52,
+            3, 35, 57, 47, 45, 16, 13, 57, 46,  9, 47, 16, 24, 63,  7,  4, 51,
+           60,  3,  7, 49,  6, 28, 44, 58, 32,  2,  4, 19,  2, 49, 55])
 
 
 
@@ -473,9 +480,9 @@ print("Next Char Predictions: \n", repr("".join(idx2char[sampled_indices])))
 ```
 
     Input: 
-     "he course, I like it not.\n\nPARIS:\nImmoderately she weeps for Tybalt's death,\nAnd therefore have I li"
+     'ibunes,\nThere is a slave, whom we have put in prison,\nReports, the Volsces with two several powers\nA'
     Next Char Predictions: 
-     "UWbTTbG!JyZkKjMlfg'E&XK&zVItZHUhWH-Sg3HgPPS3PNsHP?Vu;igXbtAy,EWpAL\naaICF.IER-xih!&OqTCdkCAIb?,WV&NkZ"
+     "cJoszc?c'gLacjDGaF;qE?tTWN,bZEMiFHo3EFjlgTPsW:TERWnqyY3wjHzxIkI?i'wn$WsigDAsh3iDLy-&mv$-k,PftT!&G!kq"
 
 
 # 定义优化器和损失函数
@@ -491,7 +498,7 @@ print("scalar_loss:      ", example_batch_loss.numpy().mean())
 ```
 
     Prediction shape:  (32, 100, 65)  # (batch_size, sequence_length, vocab_size)
-    scalar_loss:       4.174124
+    scalar_loss:       4.1732697
 
 
 
@@ -518,30 +525,14 @@ if ckpt != None:
   print("load model from checkpoint")
   model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=BATCH_SIZE)
   model.load_weights(ckpt)
-  model.build(tf.TensorShape([1, None]))
+  model.build(tf.TensorShape([1, None])) # 参数为batch_input_shape
   model.summary()
 ```
-
-    load model from checkpoint
-    _________________________________________________________________
-    Layer (type)                 Output Shape              Param #   
-    =================================================================
-    embedding_1 (Embedding)      (32, None, 256)           16640     
-    _________________________________________________________________
-    lstm_1 (LSTM)                (32, None, 512)           1574912   
-    _________________________________________________________________
-    dense_1 (Dense)              (32, None, 65)            33345     
-    =================================================================
-    Total params: 1,624,897
-    Trainable params: 1,624,897
-    Non-trainable params: 0
-    _________________________________________________________________
-
 
 
 ```python
 model.compile(
-    optimizer = 'adam',
+    optimizer = tf.train.AdamOptimizer(),
     loss = loss)
 ```
 
@@ -558,29 +549,14 @@ history = model.fit(dataset.repeat(), epochs=EPOCHS,
 ```
 
     Epoch 1/3
-
-
-    /home/subaochen/anaconda3/envs/tf1/lib/python3.7/site-packages/tensorflow/python/ops/gradients_impl.py:110: UserWarning: Converting sparse IndexedSlices to a dense Tensor of unknown shape. This may consume a large amount of memory.
-      "Converting sparse IndexedSlices to a dense Tensor of unknown shape. "
-
-
-    347/348 [============================>.] - ETA: 1s - loss: 1.3502WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f42d407c898>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
-    
-    Consider using a TensorFlow optimizer from `tf.train`.
-    WARNING:tensorflow:From /home/subaochen/anaconda3/envs/tf1/lib/python3.7/site-packages/tensorflow/python/keras/engine/network.py:1436: update_checkpoint_state (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+    346/348 [============================>.] - ETA: 0s - loss: 2.3569WARNING:tensorflow:From /home/subaochen/anaconda3/envs/tf1/lib/python3.7/site-packages/tensorflow/python/keras/engine/network.py:1436: update_checkpoint_state (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
     Instructions for updating:
     Use tf.train.CheckpointManager to manage checkpoints rather than manually editing the Checkpoint proto.
-    348/348 [==============================] - 590s 2s/step - loss: 1.3499
+    348/348 [==============================] - 17s 49ms/step - loss: 2.3542
     Epoch 2/3
-    347/348 [============================>.] - ETA: 1s - loss: 1.3215WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f42d407c898>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
-    
-    Consider using a TensorFlow optimizer from `tf.train`.
-    348/348 [==============================] - 550s 2s/step - loss: 1.3213
+    348/348 [==============================] - 13s 37ms/step - loss: 1.7675
     Epoch 3/3
-    347/348 [============================>.] - ETA: 1s - loss: 1.2981WARNING:tensorflow:This model was compiled with a Keras optimizer (<tensorflow.python.keras.optimizers.Adam object at 0x7f42d407c898>) but is being saved in TensorFlow format with `save_weights`. The model's weights will be saved, but unlike with TensorFlow optimizers in the TensorFlow format the optimizer's state will not be saved.
-    
-    Consider using a TensorFlow optimizer from `tf.train`.
-    348/348 [==============================] - 533s 2s/step - loss: 1.2979
+    348/348 [==============================] - 14s 41ms/step - loss: 1.5849
 
 
 # 绘制训练图表
@@ -605,7 +581,6 @@ plt.show()
 
     <Figure size 640x480 with 1 Axes>
 
-
 # 产生文本
 
 ## 恢复到最新的checkpoint
@@ -625,14 +600,14 @@ model.summary()
     _________________________________________________________________
     Layer (type)                 Output Shape              Param #   
     =================================================================
-    embedding_9 (Embedding)      (1, None, 256)            16640     
+    embedding_1 (Embedding)      (1, None, 256)            16640     
     _________________________________________________________________
-    lstm_9 (LSTM)                (1, None, 512)            1574912   
+    cu_dnnlstm_1 (CuDNNLSTM)     (1, None, 512)            1576960   
     _________________________________________________________________
-    dense_9 (Dense)              (1, None, 65)             33345     
+    dense_1 (Dense)              (1, None, 65)             33345     
     =================================================================
-    Total params: 1,624,897
-    Trainable params: 1,624,897
+    Total params: 1,626,945
+    Trainable params: 1,626,945
     Non-trainable params: 0
     _________________________________________________________________
 
@@ -640,7 +615,7 @@ model.summary()
 ## 进行预测
 
 model可以接受任意长度的字符串作为参数，因为创建模型时，给出的batch_input_shape为（batch_size, None），而重新构建模型时指定了batch_size=1。实际上，无论多长的字符串，model都是需要一个一个进行处理的，最终给出的是每个输入字符对应的预测字符。参考下图了解shape在各个过程的变化（出处：https://www.tensorflow.org/tutorials/sequences/text_generation）：
-![](/images/text_generation_training.png)
+![](http://softlab.sdut.edu.cn/blog/subaochen/wp-content/uploads/sites/4/2019/05/text_generation_training.png)
 
 ## 如何观察预测结果？
 可以设置num_generate为一个**小的数字**，比如3，然后在后面的三个循环中，逐步打印出input_eval, prediction_id等的值，注意观察在不同的阶段各个向量的**维度**和**数值**的变化。
@@ -693,45 +668,55 @@ def generate_text(model, start_string):
       text_generated.append(idx2char[predicted_id])
 
   return (start_string + ''.join(text_generated))
+```
 
+
+```python
 print(generate_text(model, start_string=u"First:"))
 ```
 
-    First:
-    Lo, good up thy more I have not of Giond:'
-    'Peasur
-    To me with him: my lewis affection, angry I think in
-    thee, each death, for the neck'st ded in plage.
-     as I was darring herein.
+    First: yest
+    Well; word, Gord!
     
-    MARIANA:
-    I consured
-    To Buckingman:
-    I pray Marcius, have I see, mother, widow uncle,
-    The time that thou sets shall make the court,
-    Me at me please that gave strange of thy love,--
-    Chrom thee are bid her news a cruel,
-    Oub dreams did speak. it is but sent
-    Call my heart; was silence,
-    My most children in his accur
-    As country'M: I had rather to insule
-    Your miserace star'd treep to endured
-    Or else they remaised my mind of right,
-    And thusk the fatal so? Twich thou done thereig will I seel.
+    PLOUCESTER:
+    What, thou amend to thy spuch, Clirish;
+    Are close peince, here's king is.
     
-    That here shrait blesh you offer'd down.
+    DUCENTIO:
+    Now, Play te storment: it should 'tispave's die
+    and speek matedst goants to me than house, mont
+    Troughs, must be nothing tide in mint parish
+    She for
+    Sicks, prayer, prieson are talions,
+    The gramioness sable the cerenie;
+    Fear should perend; it would well she doth int.
     
-    BENVOLIO:
-    For many change pabest full unlearned.
+    LIRY BBULYVSTHERD VI:
+    By in Cimivillo?
     
-    HORSTBESs to me my in preyched cover:
-    Therefy he you love Henry
-    Of our anmory under no more; and 'twere now revime your leagues, and
-    yet
-    O'er--not as once woman: we would cleave with took pleasure
-    That as I would bear haintainst it again.
+    AUNICELIO:
+    I have not man be strest of gorder current.
     
+    CLARENCE:
+    What year to commong to thy face?
     
+    SOMPEENS:
+    If, apseat, like you, by not, fleshielf,
+    And you my fead. With hus with his hoars.
+    Still here show, nor mercaction mouse,
+    This wilt heeld.
+    
+    LEONTES:
+    Can metage! and take us: we are
+    stands cherrow her unto goest.
+    
+    TRCHIORS:
+    Can slidat your experent prifone, both I
+    play now, our goodlisted:
+    And, I'll ge their bread musting nor sucless spokn;
+    Te'll st mush by he for all thine indy replace
+    And fut if a busin officly gave aftermen
+    Sincerroan. Of all vain in th
 
 
 # 后记
