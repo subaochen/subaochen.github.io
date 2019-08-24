@@ -23,10 +23,10 @@ MAX_CARS = 20
 MAX_MOVE_OF_CARS = 5
 
 # expectation for rental requests in first location
-RENTAL_REQUEST_FIRST_LOC = 3
+REQUEST_FIRST_LOC = 3
 
 # expectation for rental requests in second location
-RENTAL_REQUEST_SECOND_LOC = 4
+REQUEST_SECOND_LOC = 4
 
 # expectation for # of cars returned in first location
 RETURNS_FIRST_LOC = 3
@@ -43,12 +43,11 @@ RENTAL_CREDIT = 10
 MOVE_CAR_COST = 2
 
 # all possible actions
-# why +1 here?
 actions = np.arange(-MAX_MOVE_OF_CARS, MAX_MOVE_OF_CARS + 1)
 
 # An up bound for poisson distribution
 # If n is greater than this value, then the probability of getting n is truncated to 0
-# why 11?
+# why choose 11 here?
 POISSON_UPPER_BOUND = 11
 
 # Probability for poisson distribution
@@ -75,26 +74,29 @@ def expected_return(state, action, state_value, constant_returned_cars):
     rather than a random value from poisson distribution, which will reduce calculation time
     and leave the optimal policy/value state matrix almost the same
     """
-    # initailize total return
+    # initialize total return
     returns = 0.0
 
     # cost for moving cars
     returns -= MOVE_CAR_COST * abs(action)
 
     # moving cars
-    num_of_cars_first_loc = min(state[0] - action, MAX_CARS)
-    num_of_cars_second_loc = min(state[1] + action, MAX_CARS)
+    NUM_OF_CARS_FIRST_LOC = min(state[0] - action, MAX_CARS)
+    NUM_OF_CARS_SECOND_LOC = min(state[1] + action, MAX_CARS)
 
     # go through all possible rental requests
-    for rental_request_first_loc in range(POISSON_UPPER_BOUND):
-        for rental_request_second_loc in range(POISSON_UPPER_BOUND):
+    for request_first_loc in range(POISSON_UPPER_BOUND):
+        for request_second_loc in range(POISSON_UPPER_BOUND):
             # probability for current combination of rental requests
-            prob = poisson_probability(rental_request_first_loc, RENTAL_REQUEST_FIRST_LOC) * \
-                poisson_probability(rental_request_second_loc, RENTAL_REQUEST_SECOND_LOC)
+            prob = poisson_probability(request_first_loc, REQUEST_FIRST_LOC) * \
+                poisson_probability(request_second_loc, REQUEST_SECOND_LOC)
+
+            num_of_cars_first_loc = NUM_OF_CARS_FIRST_LOC
+            num_of_cars_second_loc = NUM_OF_CARS_SECOND_LOC
 
             # valid rental requests should be less than actual # of cars
-            valid_rental_first_loc = min(num_of_cars_first_loc, rental_request_first_loc)
-            valid_rental_second_loc = min(num_of_cars_second_loc, rental_request_second_loc)
+            valid_rental_first_loc = min(num_of_cars_first_loc, request_first_loc)
+            valid_rental_second_loc = min(num_of_cars_second_loc, request_second_loc)
 
             # get credits for renting
             reward = (valid_rental_first_loc + valid_rental_second_loc) * RENTAL_CREDIT
