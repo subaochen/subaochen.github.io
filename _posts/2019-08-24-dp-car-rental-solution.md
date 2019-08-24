@@ -219,23 +219,57 @@ if __name__ == '__main__':
     figure_4_2()
 ```
 
-在理清思路后，上面的代码不难理解。
+在理清思路后，上面的代码不难理解，需要重点注意以下几点：
+
+* policy evaluation和policy improvement的迭代过程，这段代码完美的复现了原始算法，值得仔细推敲。
+* expeted_return方法看似比较长，其实不难理解，目的是根据$$s,a,v(s)$$计算$$v(s')$$。
+
+完整的程序请参见：[car_rental.py](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/resources/car_rental.py)
 
 # 结果解读
 
-虽然计算量有些大（在我的电脑上耗时1分钟多），但是在有限次的迭代后，程序给出了最优的策略，如下图所示，使用颜色表示了调度车辆的数量（实际上policy3和policy4只有细微的差别，若非最强大脑恐怕都看不出来，反正我没看出来）。在左上角，颜色越深表示调度车辆的数量越大，最深的颜色显然是5辆，依次递减到0辆。在右下角则相反，颜色越浅表示调度的数量越大，依次递增到5辆。
+虽然计算量有些大（在我的电脑上耗时2分钟多），但是在有限次的迭代后，程序给出了最优的策略，如下图所示，使用颜色表示了调度车辆的数量（实际上policy3和policy4只有细微的差别，若非最强大脑恐怕都看不出来，反正我没看出来）。在左上角，颜色越深表示调度车辆的数量越大，最深的颜色显然是5辆，依次递减到0辆。在右下角则相反，颜色越浅表示调度的数量越大，依次递增到5辆。
 
 可以看出，当两个场地的车辆数量落在中间的区域时，需要调度的车辆数量为0，显然这是一个动态的过程，需要两个场地的协调和配合，也就是说需要在两个场地之间平衡车辆的数量。
 
-啥是最优？依然是个谜:-(。
+在策略$$\pi_4$$中，我们可以看到场地1的车子数量>3时，可能需要调度；场地2的车子数量>7时，可能需要调度。因此，[3,7]可以看做两个场地的最佳配置。
+
+不过，令我感到困惑的是，当场地1的数量<3，场地2的数量小于<7时，根据$$\pi_4$$，显然调度为0，难道意味着无法满足自身需求而无法调度？
 
 ![figure 4-2](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2.png)
 
 # 进一步的探索
 
-可以考虑从下面的假设条件入手：
+## POISSON_UPPER_BOUND的影响
 
-* 租车和还车的模型（不同的$$\lambda$$）对最优策略的影响？
-* 探究每个场地的最佳保有车辆数？
-* 从利益最大化角度考虑，车辆调度数为0未必是最优的策略？
-* 更多的场地，更大的停车场的建模？
+POISSON_UPPER_BOUND在程序里面控制了每个场地最多可以出租/归还多少辆车，超出这个数量强制归0。
+
+下面针对POISSON_UPPER_BOUND在[7,20]区间上进行了计算（耗时56分钟），结果如下。可以看出，在当前的假设条件下，POISSON_UPPER_BOUND>9基本就不会影响最终的结果了，更大的POISSON_UPPER_BOUND设置徒增计算量而已。
+
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_7.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_8.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_9.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_10.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_11.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_12.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_13.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_14.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_15.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_16.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_17.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_18.png)
+![](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2_19.png)
+
+
+
+## 更大的车场规模的影响
+
+TBD
+
+## 更多的停车场
+
+TBD
+
+## 租车/还车模型的影响
+
+TBD

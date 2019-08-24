@@ -48,7 +48,7 @@ actions = np.arange(-MAX_MOVE_OF_CARS, MAX_MOVE_OF_CARS + 1)
 
 # An up bound for poisson distribution
 # If n is greater than this value, then the probability of getting n is truncated to 0
-POISSON_UPPER_BOUND = 11
+# POISSON_UPPER_BOUND = 11
 
 # Probability for poisson distribution
 # @lam: lambda should be less than 10 for this function
@@ -63,7 +63,7 @@ def poisson_probability(n, lam):
     return poisson_cache[key]
 
 
-def expected_return(state, action, state_value, constant_returned_cars):
+def expected_return(state, action, state_value, constant_returned_cars, POISSON_UPPER_BOUND):
     """
     @state: [# of cars in first location, # of cars in second location]
     @action: positive if moving cars from first location to second location,
@@ -119,18 +119,20 @@ def expected_return(state, action, state_value, constant_returned_cars):
                         num_of_cars_second_loc_ = min(num_of_cars_second_loc + returned_cars_second_loc, MAX_CARS)
                         # prob是request（出租）某个数量的概率，prob_return是return（归还）某个数量的概率
                         # 两者的乘积既考虑了出租的影响，也考虑了归还的影响（对num_of_cars_of_first_loc的影响）
+                        # 从数学的观点来看，这是一个条件概率问题（如何更清晰的数学表达？）
                         prob_ = prob_return * prob
                         returns += prob_ * (reward + DISCOUNT *
                                             state_value[num_of_cars_first_loc_, num_of_cars_second_loc_])
     return returns
 
 
-def figure_4_2(constant_returned_cars=True):
+def figure_4_2(POISSON_UPPER_BOUND, constant_returned_cars=True):
     value = np.zeros((MAX_CARS + 1, MAX_CARS + 1))
     policy = np.zeros(value.shape, dtype=np.int)
 
     iterations = 0
-    _, axes = plt.subplots(2, 3, figsize=(40, 20))
+    supfig, axes = plt.subplots(2, 3, figsize=(40, 20))
+    supfig.suptitle(f'policy iteration[POISSON_UPPER_BOUND={POISSON_UPPER_BOUND}]', fontsize=30)
     plt.subplots_adjust(wspace=0.1, hspace=0.2)
     axes = axes.flatten()
     while True:
@@ -145,7 +147,8 @@ def figure_4_2(constant_returned_cars=True):
             old_value = value.copy()
             for i in range(MAX_CARS + 1):
                 for j in range(MAX_CARS + 1):
-                    new_state_value = expected_return([i, j], policy[i, j], value, constant_returned_cars)
+                    new_state_value = expected_return([i, j], policy[i, j],
+                        value, constant_returned_cars, POISSON_UPPER_BOUND)
                     value[i, j] = new_state_value
             max_value_change = abs(old_value - value).max()
             print('max value change {}'.format(max_value_change))
@@ -161,7 +164,8 @@ def figure_4_2(constant_returned_cars=True):
                 action_returns = []
                 for action in actions:
                     if (0 <= action <= i) or (-j <= action <= 0):
-                        action_returns.append(expected_return([i, j], action, value, constant_returned_cars))
+                        action_returns.append(expected_return([i, j], action,
+                            value, constant_returned_cars, POISSON_UPPER_BOUND))
                     else:
                         action_returns.append(-np.inf)
                 # 这里是关键所在：寻找使得value function最大化的action
@@ -177,7 +181,7 @@ def figure_4_2(constant_returned_cars=True):
             fig.set_yticks(list(reversed(range(MAX_CARS + 1))))
             fig.set_xlabel('# cars at second location', fontsize=30)
             fig.set_title('optimal value', fontsize=30)
-            plt.savefig('../images/rl/dp/figure_4_2.png')
+            plt.savefig(f'../images/rl/dp/figure_4_2_{POISSON_UPPER_BOUND}.png')
 
             # 也画出三维曲面图
             plot_3d_value(value)
@@ -204,8 +208,9 @@ def plot_3d_value(value):
     ax3.set_title('optimal value', fontsize=20)
     ax3.set_xlabel('# cars at second location', fontsize=10)
     ax3.set_ylabel('# cars at first location', fontsize=10)
-    plt.savefig('../images/rl/dp/figure_4_2_3d_value.png')
+    plt.savefig(f'../images/rl/dp/figure_4_2_3d_value_{POISSON_UPPER_BOUND}.png')
 
 
 if __name__ == '__main__':
-    figure_4_2()
+    for POISSON_UPPER_BOUND in np.arange(7, 20, 1):
+        figure_4_2(POISSON_UPPER_BOUND)
