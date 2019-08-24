@@ -1,3 +1,17 @@
+---
+title: DP（动态规划）解决租车运营问题
+type: post
+categories:
+- Reinforcement Learning
+layout: post
+date: 2019-08-22
+tags: [deeplearning,reinforcement learning,policy interation]
+status: publish
+published: true
+use_math: true
+comments: true
+---
+
 # 问题的提出
 
 Example 4.2是一个很接近实际的问题：
