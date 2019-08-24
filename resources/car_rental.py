@@ -10,6 +10,7 @@
 
 import matplotlib
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import seaborn as sns
 from scipy.stats import poisson
@@ -47,7 +48,6 @@ actions = np.arange(-MAX_MOVE_OF_CARS, MAX_MOVE_OF_CARS + 1)
 
 # An up bound for poisson distribution
 # If n is greater than this value, then the probability of getting n is truncated to 0
-# why choose 11 here?
 POISSON_UPPER_BOUND = 11
 
 # Probability for poisson distribution
@@ -81,8 +81,8 @@ def expected_return(state, action, state_value, constant_returned_cars):
     returns -= MOVE_CAR_COST * abs(action)
 
     # moving cars
-    NUM_OF_CARS_FIRST_LOC = min(state[0] - action, MAX_CARS)
-    NUM_OF_CARS_SECOND_LOC = min(state[1] + action, MAX_CARS)
+    init_num_of_cars_first_location = min(state[0] - action, MAX_CARS)
+    init_num_of_cars_second_location = min(state[1] + action, MAX_CARS)
 
     # go through all possible rental requests
     for request_first_loc in range(POISSON_UPPER_BOUND):
@@ -91,8 +91,8 @@ def expected_return(state, action, state_value, constant_returned_cars):
             prob = poisson_probability(request_first_loc, REQUEST_FIRST_LOC) * \
                 poisson_probability(request_second_loc, REQUEST_SECOND_LOC)
 
-            num_of_cars_first_loc = NUM_OF_CARS_FIRST_LOC
-            num_of_cars_second_loc = NUM_OF_CARS_SECOND_LOC
+            num_of_cars_first_loc = init_num_of_cars_first_location
+            num_of_cars_second_loc = init_num_of_cars_second_location
 
             # valid rental requests should be less than actual # of cars
             valid_rental_first_loc = min(num_of_cars_first_loc, request_first_loc)
@@ -117,6 +117,8 @@ def expected_return(state, action, state_value, constant_returned_cars):
                             poisson_probability(returned_cars_second_loc, RETURNS_SECOND_LOC)
                         num_of_cars_first_loc_ = min(num_of_cars_first_loc + returned_cars_first_loc, MAX_CARS)
                         num_of_cars_second_loc_ = min(num_of_cars_second_loc + returned_cars_second_loc, MAX_CARS)
+                        # prob是request（出租）某个数量的概率，prob_return是return（归还）某个数量的概率
+                        # 两者的乘积既考虑了出租的影响，也考虑了归还的影响（对num_of_cars_of_first_loc的影响）
                         prob_ = prob_return * prob
                         returns += prob_ * (reward + DISCOUNT *
                                             state_value[num_of_cars_first_loc_, num_of_cars_second_loc_])
@@ -136,7 +138,7 @@ def figure_4_2(constant_returned_cars=True):
         fig.set_ylabel('# cars at first location', fontsize=30)
         fig.set_yticks(list(reversed(range(MAX_CARS + 1))))
         fig.set_xlabel('# cars at second location', fontsize=30)
-        fig.set_title('policy {}'.format(iterations), fontsize=30)
+        fig.set_title('$\pi_{}$'.format(iterations), fontsize=30)
 
         # policy evaluation (in-place)
         while True:
@@ -151,6 +153,7 @@ def figure_4_2(constant_returned_cars=True):
                 break
 
         # policy improvement
+        print(f'policy improvement on policy:{policy}')
         policy_stable = True
         for i in range(MAX_CARS + 1):
             for j in range(MAX_CARS + 1):
@@ -161,6 +164,7 @@ def figure_4_2(constant_returned_cars=True):
                         action_returns.append(expected_return([i, j], action, value, constant_returned_cars))
                     else:
                         action_returns.append(-np.inf)
+                # 这里是关键所在：寻找使得value function最大化的action
                 new_action = actions[np.argmax(action_returns)]
                 policy[i, j] = new_action
                 if policy_stable and old_action != new_action:
@@ -173,12 +177,32 @@ def figure_4_2(constant_returned_cars=True):
             fig.set_yticks(list(reversed(range(MAX_CARS + 1))))
             fig.set_xlabel('# cars at second location', fontsize=30)
             fig.set_title('optimal value', fontsize=30)
+            plt.savefig('../images/rl/dp/figure_4_2.png')
+
+            # 也画出三维曲面图
+            plot_3d_value(value)
             break
 
         iterations += 1
 
-    plt.savefig('../images/rl/dp/figure_4_2.png')
     plt.close()
+
+
+def plot_3d_value(value):
+    fig_3d = plt.figure()  # 定义新的三维坐标轴
+    ax3 = Axes3D(fig_3d)
+
+    # 定义三维数据
+    xx = np.arange(0, MAX_CARS, 1)
+    yy = np.arange(0, MAX_CARS, 1)
+    X, Y = np.meshgrid(xx, yy)
+    # python在这里表现的很智能！
+    Z = value[X, Y]
+
+    surf = ax3.plot_surface(X, Y, Z, cmap='rainbow', linewidth=0, antialiased=False)
+    fig_3d.colorbar(surf, shrink=0.5, aspect=5)
+    ax3.set_title("optimal value", fontsize=20)
+    plt.savefig('../images/rl/dp/figure_4_2_3d_value.png')
 
 
 if __name__ == '__main__':
