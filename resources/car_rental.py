@@ -194,14 +194,16 @@ def plot_3d_value(value):
 
     # 定义三维数据
     xx = np.arange(0, MAX_CARS, 1)
-    yy = np.arange(0, MAX_CARS, 1)
+    yy = np.arange(MAX_CARS, 0, -1)
     X, Y = np.meshgrid(xx, yy)
     # python在这里表现的很智能！
     Z = value[X, Y]
 
     surf = ax3.plot_surface(X, Y, Z, cmap='rainbow', linewidth=0, antialiased=False)
     fig_3d.colorbar(surf, shrink=0.5, aspect=5)
-    ax3.set_title("optimal value", fontsize=20)
+    ax3.set_title('optimal value', fontsize=20)
+    ax3.set_xlabel('# cars at second location', fontsize=10)
+    ax3.set_ylabel('# cars at first location', fontsize=10)
     plt.savefig('../images/rl/dp/figure_4_2_3d_value.png')
 
 

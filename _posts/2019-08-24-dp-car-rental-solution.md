@@ -227,7 +227,7 @@ if __name__ == '__main__':
 
 可以看出，当两个场地的车辆数量落在中间的区域时，需要调度的车辆数量为0，显然这是一个动态的过程，需要两个场地的协调和配合，也就是说需要在两个场地之间平衡车辆的数量。
 
-啥是最优？依然是个谜:-(。最后一张图如何解读？
+啥是最优？依然是个谜:-(。
 
 ![figure 4-2](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/figure_4_2.png)
 
