@@ -240,6 +240,44 @@ if __name__ == '__main__':
 
 完整的程序请参见：[car_rental.py](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/resources/car_rental.py)
 
+列出policy iteration的算法以对照：
+
+1. Initialization
+
+   $$V(s)\in\mathcal{R}$$ and $$\pi(s)\in\mathcal{A}$$ arbitrarily fro all $$s\in\mathcal{S}$$ 
+
+2. Policy Evaluation
+
+   Loop:
+
+   ​	$$\Delta\leftarrow 0$$
+
+   ​	loop for each s\in\mathcal{S}:
+
+   ​		$$v\leftarrow V(s)$$
+
+   ​		$$V(s)\leftarrow \sum_{s',r}p(s',r\mid s,\pi(s))[r+\gamma V(s')]$$
+
+   ​		$$\Delta\leftarrow max(\Delta,|v-V(s|)$$
+
+   until $$\Delta<\theta$$(a small positive number determining the accuracy of estimation)
+
+3. Policy Improvement
+
+   $$policy\ stable \leftarrow true$$
+
+   For each $$s\in\mathcal{S}$$:
+
+   ​	$$old\ action\leftarrow\pi(s)$$
+
+   ​	$$\pi(s)\leftarrow argmax_a\sum_{s',r}p(s',r\mid s,a)[r+\gamma v(s')]$$
+
+   ​	If $$old\ action \ne \pi(s)$$, then $$policy\ stable\leftarrow false$$
+
+   If $$policy\ stable$$, then stop and return $$V\approx v_*$$ and $$\pi\approx \pi_*$$; else go to 2
+
+   ​	
+
 # 结果解读
 
 虽然计算量有些大（在我的电脑上耗时2分钟多），但是在有限次的迭代后，程序给出了最优的策略，如下图所示，使用颜色表示了调度车辆的数量（实际上policy3和policy4只有细微的差别，若非最强大脑恐怕都看不出来，反正我没看出来）。在左上角，颜色越深表示调度车辆的数量越大，最深的颜色显然是5辆，依次递减到0辆。在右下角则相反，颜色越浅表示调度的数量越大，依次递增到5辆。
