@@ -252,7 +252,7 @@ if __name__ == '__main__':
 
    ​	$$\Delta\leftarrow 0$$
 
-   ​	loop for each s\in\mathcal{S}:
+   ​	loop for each $$s\in\mathcal{S}$$:
 
    ​		$$v\leftarrow V(s)$$
 
@@ -277,6 +277,10 @@ if __name__ == '__main__':
    If $$policy\ stable$$, then stop and return $$V\approx v_*$$ and $$\pi\approx \pi_*$$; else go to 2
 
    ​	
+
+算法描述截图：
+
+![algorithm policy iteration](https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/images/rl/dp/algorithm-policy-iteration.png)
 
 # 结果解读
 
