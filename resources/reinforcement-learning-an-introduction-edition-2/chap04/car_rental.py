@@ -8,6 +8,11 @@
 # declaration at the top                                              #
 #######################################################################
 
+#
+# @TODO:使用value iteration重新写，比较一下value iteration和policy iteration
+# 的执行效率
+# @TODO 能否使用并行计算的相关技术改进算法，加速程序的执行？
+#
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D

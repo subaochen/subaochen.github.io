@@ -49,6 +49,7 @@ def figure_4_3():
         if delta < 1e-9:
             sweeps_history.append(state_value)
             break
+        print(f"state value:{state_value}")
 
     # compute the optimal policy
     policy = np.zeros(GOAL + 1)
