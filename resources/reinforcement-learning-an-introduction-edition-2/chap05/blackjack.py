@@ -7,17 +7,20 @@
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
 #######################################################################
-
+#
+# @TODO 使用面向对象的技术重写
+# @TODO 使用Env-Agent的方式重写
+#
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
+matplotlib.use('Agg')
 
 # actions: hit or stand
 ACTION_HIT = 0
-ACTION_STAND = 1  #  "strike" in the book
+ACTION_STAND = 1  # "strike" in the book
 ACTIONS = [ACTION_HIT, ACTION_STAND]
 
 # policy for player
@@ -27,15 +30,18 @@ for i in range(12, 20):
 POLICY_PLAYER[20] = ACTION_STAND
 POLICY_PLAYER[21] = ACTION_STAND
 
+
 # function form of target policy of player
 def target_policy_player(usable_ace_player, player_sum, dealer_card):
     return POLICY_PLAYER[player_sum]
+
 
 # function form of behavior policy of player
 def behavior_policy_player(usable_ace_player, player_sum, dealer_card):
     if np.random.binomial(1, 0.5) == 1:
         return ACTION_STAND
     return ACTION_HIT
+
 
 # policy for dealer
 POLICY_DEALER = np.zeros(22)
@@ -44,23 +50,31 @@ for i in range(12, 17):
 for i in range(17, 22):
     POLICY_DEALER[i] = ACTION_STAND
 
+
 # get a new card
 def get_card():
     card = np.random.randint(1, 14)
-    card = min(card, 10)
+    card = min(card, 10)  # all face cards count as 10
     return card
+
 
 # get the value of a card (11 for ace).
 def card_value(card_id):
     return 11 if card_id == 1 else card_id
 
-# play a game
-# @policy_player: specify policy for player
-# @initial_state: [whether player has a usable Ace, sum of player's cards, one card of dealer]
-# @initial_action: the initial action
-def play(policy_player, initial_state=None, initial_action=None):
-    # player status
 
+def play(policy_player, initial_state=None, initial_action=None):
+    """
+    一个回合
+    :param policy_player:specify policy for player。这个用法有点奇特，传入函数的名字，动态决定游戏采用的策略
+    :param initial_state:[whether player has a usable Ace, sum of player's cards, one showing card of dealer]
+    :param initial_action:the initial action
+    :return:[state, reward, player_trajectory]，其中
+        state：[usable_ace_player, player_sum, one showing card of dealer]，和initial_state的定义是一致的
+        reward: 本局结果
+        play_trajectory:[(usable_ace_player, player_sum, one showing card of dealer), action]
+    """
+    # player status
     # sum of player
     player_sum = 0
 
@@ -77,6 +91,7 @@ def play(policy_player, initial_state=None, initial_action=None):
 
     if initial_state is None:
         # generate a random initial state
+        # @TODO 先发玩家，再发庄家，似乎不太符合规矩？
 
         while player_sum < 12:
             # if sum of player is less than 12, always hit
@@ -178,26 +193,37 @@ def play(policy_player, initial_state=None, initial_action=None):
     else:
         return state, -1, player_trajectory
 
+
 # Monte Carlo Sample with On-Policy
 def monte_carlo_on_policy(episodes):
-    states_usable_ace = np.zeros((10, 10))
-    # initialze counts to 1 to avoid 0 being divided
+    """
+    monte carlo prediction
+    :param episodes:回合数
+    :return:[usable_ace的state value,no_usable_ace的state value]
+    """
+    # 总共有200个状态，usable_ace有100个状态，no_usable_ace有100个状态
+    # player_sum(12-21), dealer's one showing card(ace-10)
+    state_value_usable_ace = np.zeros((10, 10))
+    # initialize counts to 1 to avoid 0 being divided
     states_usable_ace_count = np.ones((10, 10))
-    states_no_usable_ace = np.zeros((10, 10))
-    # initialze counts to 1 to avoid 0 being divided
+    state_value_no_usable_ace = np.zeros((10, 10))
+    # initialize counts to 1 to avoid 0 being divided
     states_no_usable_ace_count = np.ones((10, 10))
     for i in tqdm(range(0, episodes)):
         _, reward, player_trajectory = play(target_policy_player)
-        for (usable_ace, player_sum, dealer_card), _ in player_trajectory:
+        for (usable_ace, player_sum, dealer_showing_card), _ in player_trajectory:
+            # 修正索引使从0开始
             player_sum -= 12
-            dealer_card -= 1
+            dealer_showing_card -= 1
             if usable_ace:
-                states_usable_ace_count[player_sum, dealer_card] += 1
-                states_usable_ace[player_sum, dealer_card] += reward
+                states_usable_ace_count[player_sum, dealer_showing_card] += 1
+                state_value_usable_ace[player_sum, dealer_showing_card] += reward
             else:
-                states_no_usable_ace_count[player_sum, dealer_card] += 1
-                states_no_usable_ace[player_sum, dealer_card] += reward
-    return states_usable_ace / states_usable_ace_count, states_no_usable_ace / states_no_usable_ace_count
+                states_no_usable_ace_count[player_sum, dealer_showing_card] += 1
+                state_value_no_usable_ace[player_sum, dealer_showing_card] += reward
+    # 均值即为state value
+    return state_value_usable_ace / states_usable_ace_count, state_value_no_usable_ace / states_no_usable_ace_count
+
 
 # Monte Carlo with Exploring Starts
 def monte_carlo_es(episodes):
@@ -235,6 +261,7 @@ def monte_carlo_es(episodes):
 
     return state_action_values / state_action_pair_count
 
+
 # Monte Carlo Sample with Off-Policy
 def monte_carlo_off_policy(episodes):
     initial_state = [True, 13, 2]
@@ -267,10 +294,11 @@ def monte_carlo_off_policy(episodes):
 
     ordinary_sampling = weighted_returns / np.arange(1, episodes + 1)
 
-    with np.errstate(divide='ignore',invalid='ignore'):
+    with np.errstate(divide='ignore', invalid='ignore'):
         weighted_sampling = np.where(rhos != 0, weighted_returns / rhos, 0)
 
     return ordinary_sampling, weighted_sampling
+
 
 def figure_5_1():
     states_usable_ace_1, states_no_usable_ace_1 = monte_carlo_on_policy(10000)
@@ -299,6 +327,7 @@ def figure_5_1():
 
     plt.savefig('../images/figure_5_1.png')
     plt.close()
+
 
 def figure_5_2():
     state_action_values = monte_carlo_es(500000)
@@ -333,6 +362,7 @@ def figure_5_2():
 
     plt.savefig('../images/figure_5_2.png')
     plt.close()
+
 
 def figure_5_3():
     true_value = -0.27726
