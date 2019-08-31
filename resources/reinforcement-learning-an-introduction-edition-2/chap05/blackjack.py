@@ -229,7 +229,7 @@ def monte_carlo_on_policy(episodes):
 def monte_carlo_es(episodes):
     # (playerSum, dealerCard, usableAce, action)
     state_action_values = np.zeros((10, 10, 2, 2))
-    # initialze counts to 1 to avoid division by 0
+    # initialize counts to 1 to avoid division by 0
     state_action_pair_count = np.ones((10, 10, 2, 2))
 
     # behavior policy is greedy
@@ -239,7 +239,7 @@ def monte_carlo_es(episodes):
         dealer_card -= 1
         # get argmax of the average returns(s, a)
         values_ = state_action_values[player_sum, dealer_card, usable_ace, :] / \
-                  state_action_pair_count[player_sum, dealer_card, usable_ace, :]
+            state_action_pair_count[player_sum, dealer_card, usable_ace, :]
         return np.random.choice([action_ for action_, value_ in enumerate(values_) if value_ == np.max(values_)])
 
     # play for several episodes

@@ -100,7 +100,7 @@ $$
 
 式2.1只是一个分解：$$\epsilon$$-greedy policy将greedy policy的一个确定性的$$q(s,a)$$分解成了两个部分：greedy部分的概率是$$1-\epsilon$$，其余部分的概率是$$\epsilon/|\mathcal{A}(s)|$$。
 
-式2.3是基于如下的事实：Q的最大值不小于其某种概率组合。需要进一步说明的是，恰好
+式2.3是基于如下的事实：Q的最大值不小于其某种概率组合（可参见：[policy improvement的数学证明](https://subaochen.github.io/reinforcement learning/2019/08/21/policy-improvement-math-prove/)）。需要进一步说明的是，恰好
 
 $$
 \sum_a\frac{\pi(a|s)-\frac{\epsilon}{|\mathcal{A}(s)|}}{1-\epsilon}=1
