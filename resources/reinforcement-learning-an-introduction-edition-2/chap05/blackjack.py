@@ -197,7 +197,7 @@ def play(policy_player, initial_state=None, initial_action=None):
 # Monte Carlo Sample with On-Policy
 def monte_carlo_on_policy(episodes):
     """
-    monte carlo prediction
+    monte carlo prediction（价值评估）
     :param episodes:回合数
     :return:[usable_ace的state value,no_usable_ace的state value]
     """
@@ -240,7 +240,8 @@ def monte_carlo_es(episodes):
         # get argmax of the average returns(s, a)
         values_ = state_action_values[player_sum, dealer_card, usable_ace, :] / \
             state_action_pair_count[player_sum, dealer_card, usable_ace, :]
-        return np.random.choice([action_ for action_, value_ in enumerate(values_) if value_ == np.max(values_)])
+        # return np.random.choice([action_ for action_, value_ in enumerate(values_) if value_ == np.max(values_)])
+        return np.argmax(values_)
 
     # play for several episodes
     for episode in tqdm(range(episodes)):
@@ -388,9 +389,9 @@ def figure_5_3():
     plt.savefig('../images/figure_5_3.png')
     plt.close()
 
-
+# @TODO 使用epsilon-greedy重新编写on policy
 if __name__ == '__main__':
-    figure_5_1()
+    # figure_5_1()
     figure_5_2()
-    figure_5_3()
+    # figure_5_3()
 
