@@ -65,7 +65,7 @@ def card_value(card_id):
 
 def play(policy_player, initial_state=None, initial_action=None):
     """
-    一个回合
+    玩一个回合，使用every-visit MC prediction进行状态评估
     :param policy_player:specify policy for player。这个用法有点奇特，传入函数的名字，动态决定游戏采用的策略
     :param initial_state:[whether player has a usable Ace, sum of player's cards, one showing card of dealer]
     :param initial_action:the initial action
@@ -89,9 +89,11 @@ def play(policy_player, initial_state=None, initial_action=None):
     dealer_card2 = 0
     usable_ace_dealer = False
 
+    # 发牌
     if initial_state is None:
         # generate a random initial state
-        # @TODO 先发玩家，再发庄家，似乎不太符合规矩？
+        # 实际牌局应该是先庄家、玩家各发两张牌，这里计算方便起见简化（合并）了发牌的过程
+        # 因为发牌是随机的，这种简化（合并）并不影响最终的结果
 
         while player_sum < 12:
             # if sum of player is less than 12, always hit
@@ -141,11 +143,14 @@ def play(policy_player, initial_state=None, initial_action=None):
             action = policy_player(usable_ace_player, player_sum, dealer_card1)
 
         # track player's trajectory for importance sampling
+        # 这里没有判断当前状态是否已经访问过，因此是every-visit MC prediction。但是，
+        # 因为玩家的状态在一个回合中不可能重复，因此也是first-visit MC prediction。
         player_trajectory.append([(usable_ace_player, player_sum, dealer_card1), action])
 
         if action == ACTION_STAND:
             break
         # if hit, get new card
+        # @TODO 要牌之后，玩家的状态state应该发生了变化？
         card = get_card()
         # Keep track of the ace count. the usable_ace_player flag is insufficient alone as it cannot
         # distinguish between having one ace or two.
@@ -203,6 +208,7 @@ def monte_carlo_on_policy(episodes):
     """
     # 总共有200个状态，usable_ace有100个状态，no_usable_ace有100个状态
     # player_sum(12-21), dealer's one showing card(ace-10)
+    # @TODO state_value也可以定义为一个变量：state_value=np.zeros((10,10,2))
     state_value_usable_ace = np.zeros((10, 10))
     # initialize counts to 1 to avoid 0 being divided
     states_usable_ace_count = np.ones((10, 10))
@@ -388,6 +394,7 @@ def figure_5_3():
 
     plt.savefig('../images/figure_5_3.png')
     plt.close()
+
 
 # @TODO 使用epsilon-greedy重新编写on policy
 if __name__ == '__main__':
