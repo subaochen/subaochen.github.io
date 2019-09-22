@@ -151,7 +151,6 @@ def play(policy_player, initial_state=None, initial_action=None, visit_mode="eve
         if action == ACTION_STAND:
             break
         # if hit, get new card
-        # @TODO 要牌之后，玩家的状态state应该发生了变化？
         card = get_card()
         # Keep track of the ace count. the usable_ace_player flag is insufficient alone as it cannot
         # distinguish between having one ace or two.
@@ -161,13 +160,13 @@ def play(policy_player, initial_state=None, initial_action=None, visit_mode="eve
         player_sum += card_value(card)
         # If the player has a usable ace, use it as 1 to avoid busting and continue.
         while player_sum > 21 and ace_count:
-            player_sum -= 10
+            player_sum -= 10  # 玩家状态的变化
             ace_count -= 1
         # player busts
         if player_sum > 21:
             return state, -1, player_trajectory
         assert player_sum <= 21
-        usable_ace_player = (ace_count == 1)
+        usable_ace_player = (ace_count == 1)  # 玩家状态的变化
 
     # dealer's turn
     while True:
@@ -222,6 +221,7 @@ def monte_carlo_on_policy(episodes):
             # 修正索引使从0开始
             player_sum -= 12
             dealer_showing_card -= 1
+            # @TODO 尝试gramma != 1的情形
             if usable_ace:
                 states_usable_ace_count[player_sum, dealer_showing_card] += 1
                 state_value_usable_ace[player_sum, dealer_showing_card] += reward
