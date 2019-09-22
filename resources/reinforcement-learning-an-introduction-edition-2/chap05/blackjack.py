@@ -63,12 +63,13 @@ def card_value(card_id):
     return 11 if card_id == 1 else card_id
 
 
-def play(policy_player, initial_state=None, initial_action=None):
+def play(policy_player, initial_state=None, initial_action=None, visit_mode="every-visit"):
     """
     玩一个回合，使用every-visit MC prediction进行状态评估
     :param policy_player:specify policy for player。这个用法有点奇特，传入函数的名字，动态决定游戏采用的策略
     :param initial_state:[whether player has a usable Ace, sum of player's cards, one showing card of dealer]
     :param initial_action:the initial action
+    :param visit_mode:every-visit or first-visit or last-visit
     :return:[state, reward, player_trajectory]，其中
         state：[usable_ace_player, player_sum, one showing card of dealer]，和initial_state的定义是一致的
         reward: 本局结果
