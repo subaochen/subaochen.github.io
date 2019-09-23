@@ -221,7 +221,7 @@ def monte_carlo_on_policy(episodes):
             # 修正索引使从0开始
             player_sum -= 12
             dealer_showing_card -= 1
-            # @TODO 尝试gramma != 1的情形
+            # @TODO 尝试gramma != 1的情形，需要逆序访问player_trajectory
             if usable_ace:
                 states_usable_ace_count[player_sum, dealer_showing_card] += 1
                 state_value_usable_ace[player_sum, dealer_showing_card] += reward
