@@ -72,8 +72,9 @@ def play(policy_player, initial_state=None, initial_action=None, visit_mode="eve
     :param visit_mode:every-visit or first-visit or last-visit
     :return:[state, reward, player_trajectory]，其中
         state：[usable_ace_player, player_sum, one showing card of dealer]，和initial_state的定义是一致的
+              指游戏的初始状态，也就是说，游戏的初始状态+player_trajectory能够回放整个游戏的过程
         reward: 本局结果
-        play_trajectory:[(usable_ace_player, player_sum, one showing card of dealer), action]
+        player_trajectory:[(usable_ace_player, player_sum, one showing card of dealer), action]
     """
     # player status
     # sum of player
@@ -207,7 +208,7 @@ def monte_carlo_on_policy(episodes):
     :return:[usable_ace的state value,no_usable_ace的state value]
     """
     # 总共有200个状态，usable_ace有100个状态，no_usable_ace有100个状态
-    # player_sum(12-21), dealer's one showing card(ace-10)
+    # player_sum(12-21), dealer's one showing card(ace-10)即(1-10)
     # @TODO state_value也可以定义为一个变量：state_value=np.zeros((10,10,2))
     state_value_usable_ace = np.zeros((10, 10))
     # initialize counts to 1 to avoid 0 being divided
@@ -216,7 +217,9 @@ def monte_carlo_on_policy(episodes):
     # initialize counts to 1 to avoid 0 being divided
     states_no_usable_ace_count = np.ones((10, 10))
     for i in tqdm(range(0, episodes)):
+        # 丢弃了游戏的初始状态，在计算状态价值的时候用不上
         _, reward, player_trajectory = play(target_policy_player)
+        # 丢弃了action，因为在评估状态价值的时候用不到action
         for (usable_ace, player_sum, dealer_showing_card), _ in player_trajectory:
             # 修正索引使从0开始
             player_sum -= 12
@@ -399,7 +402,7 @@ def figure_5_3():
 
 # @TODO 使用epsilon-greedy重新编写on policy
 if __name__ == '__main__':
-    # figure_5_1()
-    figure_5_2()
+    figure_5_1()
+    #figure_5_2()
     # figure_5_3()
 
