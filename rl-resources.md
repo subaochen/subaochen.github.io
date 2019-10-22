@@ -12,6 +12,7 @@ author_footer: false
 
 ## 组织和人物
 * [RLAI Lab](https://rlai-lab.github.io)，Rich sutton领导下的实验室。
+* [RLCard](http://rlcard.org/)，德州农工大学的胡侠率领下的华人团队的作品。
 * [Ray](https://oneraynyday.github.io/)
 
 
