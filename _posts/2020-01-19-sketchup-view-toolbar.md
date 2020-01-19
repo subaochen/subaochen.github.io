@@ -1,5 +1,5 @@
 ---
-title: sketchup的
+title: sketchup的三视图
 type: post
 categories:
 - 兴趣
