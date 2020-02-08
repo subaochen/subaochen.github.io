@@ -58,4 +58,4 @@ snippets的语法很简单：`${1}`,`${2}`等表示按Tab键时跳转的位置�
 
 完成了上述的设置，编写一个PostgreSQL的函数就变的有趣和简单了，看视频：
 
-<iframe src="//player.bilibili.com/player.html?aid=87462502&cid=149444317&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="600"> </iframe>
+<iframe src="//player.bilibili.com/player.html?aid=87462502&cid=149444317&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="800" height="600"> </iframe>
