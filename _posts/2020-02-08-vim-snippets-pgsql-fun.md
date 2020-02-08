@@ -62,4 +62,4 @@ snippets的语法很简单：${1},${2}等表示按Tab键时跳转的位置，数
 
 
 
-<iframe height=498 width=510 src="" frameborder=0 allowfullscreen></iframe>
+<iframe height=498 width=510 src="https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/video/vim-snippets-pgsql-fun.mp4" frameborder=0 allowfullscreen></iframe>
