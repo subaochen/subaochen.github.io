@@ -58,8 +58,5 @@ snippets的语法很简单：`${1}`,`${2}`等表示按Tab键时跳转的位置�
 
 完成了上述的设置，编写一个PostgreSQL的函数就变的有趣和简单了，看视频：
 
-<video id="video" controls="" preload="none" 
-      <source id="mp4" src="https://raw.githubusercontent.com/subaochen/subaochen.github.io/master/video/vim-snippets-pgsql-fun.mp4" type="video/mp4">
-      <p>Your user agent does not support the HTML5 Video element.</p>
-    </video>
+<iframe src="//player.bilibili.com/player.html?aid=87462502&cid=149444317&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 
