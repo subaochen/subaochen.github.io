@@ -46,3 +46,9 @@ PostgreSQL的logical replication配置方法实录，大致分为以下的几个
    select * from pg_publication_tables;
    select * from pg_stat_publication;
    ```
+   
+1. 在db_slaver数据库上，需要同步的数据表不能和db_master的数据表有冲突，这基本上意味着初始的时候，db_slaver上需要同步的数据表最好清空（truncate）一下。
+
+1. 如果存在多个db_master，在每个db_slaver上面执行`create subscription`命令创建一个订阅。自然，每个db_slaver的subscription名称应该不同，这样db_master才知道要把数据发送给谁。
+
+1. 很遗憾的是，`create subscription`命令不能通过psql -c的方式来执行，否则会报错：`...cannot run inside a transaction block psql`，导致如果需要创建很多的db_slaver的时候比较麻烦，需要一台一台的在db_slaver上面执行创建subscription的命令。也许我对psql的理解不到位，也许有方法可以通过脚本的方式执行`create subscription`命令，希望知道的朋友多多指点，先谢过了！
