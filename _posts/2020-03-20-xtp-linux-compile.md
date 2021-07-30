@@ -23,7 +23,7 @@ comments: true
 
 ```
 export BOOST_INCLUDE=$HOME/devel/boost
-export BOOST_LIB=$HOME/boost/stage/lib
+export BOOST_LIB=$HOME/devel/boost/stage/lib
 ```
 
 **第三个坑**：编译XTP，这个坑更大，涉及到三个文件的修改和一个环境的配置。
@@ -42,15 +42,17 @@ export BOOST_LIB=$HOME/boost/stage/lib
 
 也就是说，设置合适的环境变量，修改boost的版本号，以及python模块的名字为python36（具体查看编译boost时生成的库文件，位于boost/stage/lib）。
 
-<!--第二，还需要修改vnxtpquote.cpp的第1954行为：-->
+<!--第二，还需要修改vnxtpquote.cpp的第1954行为：
 
 ```
 class_<QuoteApiWrap, boost::shared_ptr<QuoteApiWrap>, boost::noncopyable>("QuoteApi")
 ```
 
+xtp 2.0+版本中似乎不需要了？-->
+
 <!--这个看不太懂，根据bobo liu同学的解释，应该是boost会直接读取python的类名作为数据类型，因此需要在泛型中强制类型转换为QuoteApi类型。同样的道理，也需要修改vnxtptrader.cpp文件的对应位置。-->
 
-第二，修改vnxtpquote.h/vnxtptrader.h中关于mutex的定义，原始代码的命名空间没搞清楚，应该为：`boost::mutex`。
+第二，修改vnxtpquote.h/vnxtptrader.h中关于mutex的定义，原始代码的命名空间没搞清楚，应该为：`boost::mutex`。也就是说，所有使用mutex定义变量的地方，都要修改为`boost::mutex`。
 
 第三，编译XTP完成后生成的两个so文件以及XTP的c++原生SDK的两个lib库（也是so文件，libxtp...so，位于bin/Linux目录下），我采取了简单的办法，放到了一个单独的目录下，并设置了两个环境变量，以便任何环境下都能找到这几个so：
 
